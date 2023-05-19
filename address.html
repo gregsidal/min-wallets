@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Ethereum Utilities - Address Information</title>
+    <meta content="Query information about Ethereum addresses" name="description"/>
+    <meta content="Greg Sidal" name="author"/>
+    <!--<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>-->
+    <link  href="w3ui.css" rel="stylesheet" type="text/css">
+    <script src="lib/web3/js/web3.min.js" ></script>
+    <script src="w3ui.js"                 ></script>
+    <script src="meu.js"                  ></script>
+    <script>
+      Web3UI.Basic = {};
+      Web3UI.Basic.update = function( action ) {
+        Web3UI.Network.getAddressInfo( 'Web3UI_0account', action );
+      }
+    </script>
+  </head>
+
+  <body onload="MEU.onload('nosign');">
+
+    <div id="Web3UI_0NETWORK"></div>
+
+    <h1 class="topbargap">Minimal Ethereum Utilities <div class="mbr">Address Information</div></h1>
+
+    <p class="descr"></p>
+
+    <p class='wallet'>
+      <span class='control'>
+        <span class="control">
+          <span class='tag'>Address:</span>
+          <input type='text' id='Web3UI_0account_address' value='' size='10' oninput="Web3UI.Wallet.clrwmsg()"/>
+          <button class='inline' onClick='Web3UI.Basic.update();'>Update</button>
+        </span>
+      </span>
+      <span class="subsec">
+        <span class="control">
+          <span class="tag">Balance</span>
+          <input type='text' id='Web3UI_0account_balance' value='' size='10' class='num' disabled/>
+          <span class='subbtn refresh' onClick="Web3UI.Basic.update('balance');"></span>
+        </span>
+        <span class="control">
+          <span class="tag">Wallet Transaction Count ("Nonce")</span>
+          <input type='text' id='Web3UI_0account_nonce' value='' size='10' class='num' disabled/>
+          <span class='subbtn refresh' onClick="Web3UI.Basic.update('nonce');"></span>
+        </span>
+        <span class="control">
+          <span class="tag">Recent Gas Price</span>
+          <input type='text' id='Web3UI_0account_gasprice' value='' size='10' class='num' disabled/>
+          <span class='subbtn refresh' onClick="Web3UI.Basic.update('gasprice');"></span>
+        </span>
+        <span class='toggle closed' id='Web3UI_0account_response_foldpane'>
+          <span class='subsec statusinfo'>
+            <i id='Web3UI_0account_response'></i>
+          </span>
+        </span>
+      </span>
+    </p>
+
+    <div id="Web3UI_0FOOT"></div>
+
+  </body>
+
+</html>
+

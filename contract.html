@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Ethereum Utilities - Contract Interaction</title>
+    <meta content="Query and send transactions to an Ethereum contract" name="description"/>
+    <meta content="Greg Sidal" name="author"/>
+    <link  href="w3ui.css" rel="stylesheet" type="text/css">
+    <script src="lib/cryptojs/js/aes.js"  ></script>
+    <script src="lib/web3/js/web3.min.js" ></script>
+    <script src="w3ui.js"                 ></script>
+    <script src="meu.js"                  ></script>
+  </head>
+
+  <body onload="MEU.onload();MEU.insertabisec();">
+
+    <div id="Web3UI_0NETWORK"></div>
+
+    <h1 class="topbargap">Minimal Ethereum Utilities <div class="mbr">Contract Interaction</div></h1>
+
+    <p class="descr">
+      <label for='Web3UI_0LINKS_infotoggle' class='toggler menu'>Query and transact with a contract.</label>
+      <input type='checkbox' id='Web3UI_0LINKS_infotoggle' class='toggler'></input>
+      <span class='toggle long closed'>
+        <span class='subsec'>
+      <span id="Web3UI_0VERSION"></span>
+      Contract's ABI is used to generate "dapp" user interface.
+      Address and ABI (ERC20) of the Tether contract is preloaded.
+      <br/><br/>
+      For a more secure way to transact with contracts, try the <a href="offline-install.html">offline tools</a>.
+        </span>
+      </span>
+    </p>
+
+    <span id="Web3UI_0ABISECTION"></span>
+
+    <div id="Web3UI_0UIGEN"></div>
+
+    <div id="Web3UI_0FOOT"></div>
+
+  </body>
+
+</html>

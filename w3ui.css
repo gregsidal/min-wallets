@@ -1,0 +1,287 @@
+/*default css for Minimal Ethereum Utilities*/
+/*main*/
+      body {
+        margin:2em 25%; padding:0;
+        font-family:"Arial", sans-serif; font-size:93%;
+        color:#333; background-color:#ededed;
+      }
+      @media all and (min-width:1700px) and (orientation:landscape) {
+        body {margin:2em 30%;}
+      }
+      @media all and (max-width:1250px) and (orientation:landscape) {
+        body {margin:2em 20%;}
+      }
+      @media all and (max-width:850px) and (orientation:landscape) {
+        body {margin:2em 10%;}
+      }
+
+/*section*/
+      p {border:1px solid #ddd; padding:1em; background-color:rgb(250,250,252); margin-bottom:3.1em;}
+      /*p.wallet {background-color:rgb(237,245,240); padding-bottom:1.2em;}*/
+      p.infobox {font-size:95%; padding-top:1.1em; padding-bottom:1.1em;}
+      p.descr, p.break, p.foot, p.appendix, p.section {border:0; padding:0; background-color:inherit;}
+      p.wallet, p.method, p.call, p.transact {}
+      p.descr, p.section {margin-bottom:3em; font-size:90%;}
+      p.descr {margin-top:1em;}
+      p.descr.gap {margin-top:1.7em;}
+      p.descr:empty {margin-bottom:2em;}
+      p.descr > b {font-size:110%; padding-top:0.5em;}
+      p.break {font-size:120%;}
+      p.foot, p.appendix {font-size:80%;}
+      /* p.appendix {border-top:1px dashed rgb(130,130,130); padding-top:0.3em; margin:0;} */
+      p.foot {margin-top:0.0em; margin-bottom:3em;}
+      ul {font-size:85%;}
+
+/*subsection*/
+      .subsec, .control, .toggle, .nest, .indent, .tag, .console {display:block; margin:0; padding:0;}
+      .subsec {margin-top:1.5em;}
+      .subsec.med {margin-top:1.3em;}
+      .subsec.max {margin-top:2.1em;}
+      .subsec.min {margin-top:0;}
+      .subsec:empty {display:none;}
+      .control, .nest {margin-top:0.3em;}
+      .control.minmed {margin-top:0.4em;}
+      .control.med {margin-top:1.0em;}
+      .control.max {margin-top:1.5em;}
+      .indent, .nest {margin-left:1.5em;}
+      .control.struct {margin-top:1em; margin-bottom:1em;}
+      .control.array {margin-top:0.7em; margin-bottom:0.7em;}
+      .control.pay {margin-bottom:1.2em;}
+      .control:first-child, .nest:first-child {margin-top:0;}
+      .control.sameline {display:inline-block;}
+      .control.comment {margin-bottom:0.7em;}
+      .nest {margin-bottom:1em;}
+      .subsec.sep {padding-top:3em;}
+
+      .subsec.links:first-child {margin-top:1.1em;}
+      .nomargin > .subsec.links {margin-top:0;}
+      .nomargin > .beta {margin-top:0;}
+
+      .toggle {overflow: hidden; max-height: 10em; transition: max-height 0.9s ease-in;}
+      .toggle.short {max-height: 6em;}
+      .toggle.med {max-height: 17em;}
+      .toggle.long {max-height: 25em;}
+      .toggle.closed {max-height: 0; transition: max-height 0.7s ease-out;}
+
+/*console*/
+      .console {border: 0; margin: 0; padding: 0; width: 100%; background-color: #f3f3f3;}
+      .console {position: fixed; left: 0; top: auto; right: 0; bottom: 0;}
+      .console {visibility: visible; opacity: 1.0; transition: opacity 1.0s ease-in;}
+      .console.closed {visibility: hidden; opacity: 0.0;}
+
+      .consolehd {border: 0; margin: 0; padding: 0.4em 0.60em; max-width: 100%;}
+      .consolehd {font-size: 75%; color: rgb(240,240,240); background-color: rgb(120,120,120);}
+      .consolehdmsg > .confirmed {color: rgb(210,255,210);}
+      .consolehdmsg > .failed {color: rgb(255,200,200);}
+      @keyframes blink {
+        0% {color: rgb(255,255,220);}
+        60% {color: transparent;}
+        100% {color: rgb(255,255,220);}
+      }
+      .blink, .consolehdmsg > .pending {
+        animation-name: blink; animation-delay: 0.1s; animation-duration: 0.8s; animation-iteration-count: infinite;
+      }
+
+      .consolebody {border: 0; margin: 0; padding: 0; overflow: auto; font-size: 80%;}
+      .consolebody {transition: height 1.2s ease;}
+
+      .consolemsg {padding: 0.6em 0.75em; border-top: 1px dashed #888;}
+      .consolemsg:first-child {border-top: 0;}
+      .consolemsg.sub {padding: 0; border: 0; margin-left: 1.75em; margin-top: 0.3em;}
+      .consolemsg.failed {background-color: rgba(255,40,40,0.06);}
+      .consolemsg.pending, .consolemsg.almost {background-color: rgba(255,255,30,0.07);}
+      .consolemsg.almost {background-color: rgba(170,250,30,0.06);}
+      .consolemsg.confirmed {background-color: rgba(40,250,40,0.06);}
+
+/*top bar*/
+      .topbar {border: 0; margin: 0; padding: 0.4em 0.60em; max-width: 100%;}
+      .topbar {position: absolute; left: 0; top: 0; right: 0; bottom: auto;}
+      .topbar {font-size: 75%; color: rgb(245,245,245); background-color: rgb(120,120,120);}
+      .topbar > .toggle > .subsec {padding-bottom: 0.4em;}
+
+      .menu:not(.left):after {content:'...'; margin-left:0.8em;}
+      .menu:not(.left):empty:after {margin-left:0;}
+      .menu.left:before {content:'\2af6'; font-size:130%; margin:0; padding:0; margin-top:0.2em; margin-right:0.5em;}
+
+/*text*/
+      h1, h2 {font-size:110%; padding-bottom:1.4em; padding-top:1em; margin:0;}
+      h1.topbargap {margin-top:1.2em;}
+      h2 {padding-top:0.6em;}
+      b {font-size:105%; font-weight:bold; display:block;}
+      i, .tt {font-family:monospace; word-wrap:break-word;}
+      .tt {font-size: 110%;}
+      i {font-size:110%; color:#283; font-style:normal; padding-top:1em; display:block;}
+      i.top {padding-top:0;}
+      i.gap {padding-top:1.9em;}
+      i.code {font-size:90%; color:rgb(90,90,120); padding-top:1.7em;}
+      i.pre {font-size:96%; color:rgb(20,20,130); padding-top:1.7em; white-space:pre; overflow-x: auto;}
+      i:empty {padding:0;}
+      i > .failed {color:rgb(235,90,90);}
+
+      .walletinfo > .control > .label {font-size:75%;   display:none;}
+      .walletinfo > .control > i {padding:0; color:rgb(30,30,130); min-height:1.5em;}
+      .walletinfo > .control > i:before {color:rgb(0,0,0); white-space:nowrap;}
+      .walletinfo > .control > i.key:before {content:'\26bf'; margin-right:0.3em;}
+      .walletinfo > .control > i.address:before {content:'\2709'; margin-right:0.3em;}
+
+      .txinfo > i, .statusinfo > i {padding:0; padding-top:1.1em; min-height:1.5em;}
+      .txinfo > i:first-child, .statusinfo > i:first-child {padding:0;}
+
+      tt {font-size:120%; word-wrap:break-word;}
+      /*.warn {color:rgb(150,50,50);}*/
+      .i {display:inline-block; font-style:italic;}
+      .beta {display:block; background-color:rgb(245,238,238); border:1px solid #ddd;}
+      .beta {font-size:85%; padding:0.5em; margin-top:0.2em; margin-bottom:0.3em;}
+      .beta.nomargin {margin-top:0;}
+      .tag, .beta.small {font-size:80%;}
+      .explain, .filenametag, .label, p.explain {font-size:83%;}
+      .footnote {font-size:75%;}
+      p.comment {font-size:80%; margin:0;}
+      .pbr, .sbr, .tsbr, h1, .tag.array, .tag.sameline {display:inline-block;}
+      .pbr:before {content:' -- ';}
+      .pbr:empty:before {content:'';}
+      .tsbr:before {content:'';}
+      .sbr:before {content:' | ';}
+
+      .li {display:block; margin-left:1.2em;}
+      .li:before {content:'\2022'; padding-right:0.3em;}
+
+/*button*/
+      button, textarea {display:block; margin:0; border:0; border-radius:0.2em;}
+      button {font-size:95%; padding:0.3em 0.7em; color:#fff; background-color:rgb(110,115,150); cursor:pointer;}
+      button.abi, button.create, button.open, button.call, button.sign, button.send {}
+      button.abi {margin-top:0;}
+      button.open {margin-top:0.3em;}
+      button.send {margin-top:1em;}
+      button.inline, button.sameline {display:inline-block;}
+      .subbtn, .menubtn {display:inline-block; padding:0.3em 0.7em; cursor:pointer;}
+      .menubtn {font-size:110%; background-color:#888; color:#fff;}
+      .menubtn.selected {background-color:yellow; color:#888;}
+      .subbtn {font-size:75%;  border:1px solid rgb(170,170,170); background-color:transparent;}
+      button.dispnone, button.hideifempty:empty, .dispnone {display:none;}
+      button.inline {display:block; margin-top:0.2em;}
+     .subbtn.refresh {border:0; padding:0.1em 0.3em; font-size:100%;}
+     .subbtn.refresh:after {content: '\21BB' ;}
+
+      @media all and (hover: hover) {
+        button:hover, .subbtn:hover, .menubtn:hover {color:#fff; background-color:rgb(220,90,110);}
+      }
+      button:active, .subbtn:active, .menubtn:active {color:#fff; background-color:rgb(220,90,110);}
+      button:disabled, .subbtn:disabled {color:#fff; background-color:rgb(220,220,220);}
+
+
+/*input*/
+      input {font-size:120%; text-overflow:ellipsis;}
+      input, textarea {font-family:monospace; width:30em; margin:0; border:1px solid #ddd;}
+      input[type="radio"] {width:inherit;}
+
+      /*
+      .filesave:empty ~ .filesavemsg {display:none;}
+      */
+      .filenametag:empty {display:none;}
+      .filenametag:empty + .filename {display:none;}
+
+      .filenametag.rawtx {margin-top:1.7em;}
+      .net {width:24em;}
+      .num {width:14em;}
+      .int {width:3em;}
+      .net.int {width:5em;}
+      .pk, .pass, .filename {width:99%; max-width:50em;}
+      textarea {width:99%; font-size:85%; height:15em;}
+      input.net {margin-bottom:0.4em;}
+      input.provider, input.chainid {margin-bottom:0.4em;}
+      input.provider, input.chainid, input.net, input.pass, input.filename {background-color:rgb(246,246,246);}
+      input.dark {background-color:rgba(255,255,255,0.5);}
+
+      input:focus, input:hover {background-color:rgb(255,255,255);}
+      input:disabled {background-color:rgb(243,243,243);}
+
+      label.toggler {display:block; cursor:pointer;}
+      label.toggler.sameline {display:inline-block; font-size:85%;}
+      label.toggler:active {color:rgb(220,90,110);}
+      input.toggler {position:absolute; display:none;}
+      input.toggler:checked + .toggle {max-height: 10em; transition: max-height 0.7s ease-out;}
+      input.toggler:checked + .toggle.med {max-height: 18em; transition: max-height 1.0s ease-out;}
+      input.toggler:checked + .toggle.long {max-height: 30em; transition: max-height 1.3s ease-out;}
+
+/*link*/
+      a {color:rgb(20,40,150);}
+      a:visited {color:inherit;}
+      a:active, label.toggler:active {color:rgb(255,60,70);}
+      .clickable, .selectable {cursor:pointer;}
+      .donate {color:rgb(100,100,100); cursor:pointer;}
+      .donate:active {color:rgb(0,0,0);}
+
+/*title overrides*/
+      .mbr {display:block;}
+      h1 {font-size:80%;}
+      h1>.mbr {font-size:130%; padding-top:0.1em;}
+
+/*phone overrides*/
+      @media all and (orientation:portrait) {
+        h1 {font-size:85%;}
+        h1 {margin-left:1.15em; margin-right:1.15em; padding-bottom:0em; padding-top:1.5em;}
+        h1>.mbr {font-size:130%; padding-bottom:1.2em;}
+        h1.topbargap {margin-top:2.3em;}
+        h2 {font-size:110%;}
+        h2 {margin-left:0.90em; margin-right:0.90em; padding-top:1.0em;}
+        i {font-size:100%;}
+        tt {font-size:95%;}
+        p.break {font-size:110%;}
+        input {font-size:110%;}
+        .x {font-family:"Courier", serif;}
+        input {max-width:99%; border:1px solid #ddd;}
+        input[type="radio"] {width:inherit; display:inline-block;}
+        button.inline {display:block; margin-top:0.2em;}
+        .control.sameline {display:block;}
+        .topbar {font-size:70%;}
+      }
+
+      @media all and (orientation:portrait) {
+        body {font-size:93%;}
+        body {margin:0; padding:0;}
+        p {margin-top:0; margin-bottom: 2.50em; border:0;}
+        p.descr, p.break, p.foot, p.appendix, p.section {padding:0 1em;}
+        p.descr.gap {margin-top:1.0em;}
+        p.descr, p.section {margin-bottom:2.7em; font-size:85%;}
+        p.descr {margin-top:0.2em;}
+        p.descr:empty {margin-bottom:1.25em;}
+        p.foot {font-size:70%;}
+      }
+
+      @media all and (max-width:520px) and (orientation:portrait) {
+        h1 {font-size:75%;}
+        h2 {font-size:100%;}
+        p {margin-bottom: 2.20em;}
+        p.descr.gap {margin-top:0.8em;}
+        p.descr, p.section {margin-bottom:2.3em;}
+        p.descr:empty {margin-bottom:1.05em;}
+        b {font-size:90%;}
+        .beta {font-size:75%;}
+        .pbr, .sbr, .tsbr {display:block;}
+        .sbr, .tsbr {margin-top:0.4em;}
+        .pbr {margin-top:0.3em; margin-bottom:0.3em;}
+        .pbr:before, .sbr:before, .tsbr:before {content:'';}
+        button {font-size:87%;}
+      }
+
+      @media all and (min-width:700px) and (orientation:portrait) {
+        /*body {font-size:100%;}*/
+      }
+
+
+
+
+      a.dark, .donate.dark, label.toggler.dark {color:rgb(235,235,235);}
+      .topbar > label.toggler.dark {color:rgb(215,255,215); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+      @media all and (hover: hover) {
+        a:hover, .donate:hover, label.toggler:hover {color:rgb(210,70,90);}
+        label.toggler.dark:hover, a.dark:hover, .donate.dark:hover {color:rgb(255,220,220);}
+      }
+      a:active, label.toggler:active, .donate:active {color:rgb(255,60,70);}
+      a.dark:active, label.dark.toggler:active, .donate.dark:active {color:rgb(255,255,255);}
+
+
+      .oneline {display:inline-block;}
+      .topbar > input {margin: 0.1em;}
+

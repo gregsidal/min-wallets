@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Minimal Ethereum Utilities - Contract Transactions</title>
+    <meta name="description" content="Create and sign Ethereum transactions offline"/>
+    <meta name="author" content="Greg Sidal"/>
+    <link  href="../w3ui.css" rel="stylesheet" type="text/css">
+    <script src="../lib/cryptojs/js/aes.js"  ></script>
+    <script src="../lib/web3/js/web3.min.js" ></script>
+    <script src="../w3ui.js"                 ></script>
+    <script src="../meu.js"                  ></script>
+  </head>
+
+  <body onload="MEU.onload('offline',['params','broad','call']);MEU.insertabisec(false,true);">
+
+    <div id="Web3UI_0NETWORK"></div>
+
+    <h1 class="topbargap">Offline Minimal Ethereum Utilities <div class="mbr">Contract Transactions</div></h1>
+
+    <p class="descr">
+      <label for='Web3UI_0LINKS_infotoggle' class='toggler menu'>Sign and save transactions to be sent to a contract.</label>
+      <input type='checkbox' id='Web3UI_0LINKS_infotoggle' class='toggler'></input>
+      <span class='toggle long closed'>
+        <span class='subsec'>
+      <span id="Web3UI_0VERSION"></span>
+      Contract's ABI is used to generate "dApp" user interface.
+      Address and ABI (ERC20) of the Tether contract is preloaded.
+      <span id="Web3UI_0LINKS"></span>
+        </span>
+      </span>
+    </p>
+
+    <span id="Web3UI_0ABISECTION"></span>
+
+    <div id="Web3UI_0UIGEN"></div>
+
+    <div id="Web3UI_0FOOT"></div>
+
+  </body>
+

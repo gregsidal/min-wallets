@@ -1,21 +1,22 @@
 # min-wallets
-Some small simple non-custodial Ethereum wallets and utilities that run locally in browser with no dependencies (no browser plugins or other installs needed). A third-party relay (configurable "HTTP provider") is used to query the blockchain and broadcast transactions.
+Some small simple self-custodial Ethereum wallet and transaction tools that run locally in browser without the need for browser plugins or other installs.
 
-Offline versions of the wallets are available, which can be used to manage keys and sign transactions on an air-gapped device.
+The offline versions of the utilities can be used to manage wallets and sign transactions on an air-gapped device.
+
+The tools are live here: https://gregsidal.github.io/min-wallets/index.html
 
 Included are:
 
-    Account Wallet
+    Wallet manager (create and save wallets)
   
-    Contract Wallet
+    Payments (send payment transactions)
+    
+    Contract Interaction (query and transact with a contract)
   
-    Contract Deployment Wallet
+    Contract Deployment (deploy an instance of a contract)
   
-    Vanity Wallet Miner
+    Vanity Wallet Miner (generate key-pair with a specified address prefix)
   
-    General Address Information
-  
-    Broadcast Raw Transaction
+    Broadcast Signed Raw Transaction
 
-All are accessible here: https://gregsidal.github.io/min-wallets/index.html
-
+Web3.js, from Ethereum foundation, is used to create key-pairs and sign transactions.  No RYO crypto primitives used.

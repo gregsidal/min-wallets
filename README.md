@@ -1,4 +1,4 @@
-# min-wallets
+# Minimal Ethereum Utilities
 Some small simple self-custodial Ethereum wallet and transaction tools that run locally in browser without the need for browser plugins or other installs.
 
 The offline versions of the utilities can be used to manage wallets and sign transactions on an air-gapped device.

@@ -16,9 +16,9 @@ var MEU = {
             "<span class='subsec'>" +
               "<span class='control'>" +
                 "<button class='create' " + 
-                        "onclick='Web3UI.Utils.gete(" + '"Web3UI_0account_file"' + ").click()'/>Open from File</button> " +
+                        "onclick='Web3UI.Utils.selfile(" + '"Web3UI_0account_file"' + ")'/>Open from File</button> " +
                 "<input type='file' class='dispnone' accept='text/*' id='Web3UI_0account_file' " +
-                       "onchange='Web3UI.Wallet.openfromfile(this.files[0],true,true);'/>" +
+                        "onchange='Web3UI.Wallet.openfromfile(this.files[0],true,true);'/>" +
               "</span>" +
               "<span class='subsec'>" +
                 "<span class='label tag'>Private key:</span>" +
@@ -43,7 +43,7 @@ var MEU = {
             "</span>" +
             "<span class='control med'>" +
               "<span class='label tag'>Address</span>" +
-              "<i class='address selectable' id='Web3UI_0account_addressshow' onclick='Web3UI.Utils.select(this)'></i>" +
+              "<i class='address selectable' id='Web3UI_0account_addressshow' onclick='Web3UI.Utils.Qr.select(this)'></i>" +
             "</span>" +
           "</span>" +
         "</span>" +
@@ -54,7 +54,7 @@ var MEU = {
                               "class='filename' onchange='Web3UI.Wallet.filenamechanged();' value=''/> " +
           "</span>" +
           "<span class='control'>" +
-            "<span class='label tag'>Password:</span>" +
+            "<span class='label tag'>Password for save:</span>" +
             "<input type='text' id='Web3UI_0account_pass' class='pass' value=''/>" +
           "</span>" +
           "<button id='Web3UI_0account_savebtn' class='open hideifempty filesave' " +
@@ -72,14 +72,15 @@ var MEU = {
     // add wallet create HTML to page
     genwalletcreate: function( version ) {
       var HTML = MEU.walletcreate;
-      HTML = HTML.replace( '$PKSAVEMSG$', MEU.pksavemsg );
+      HTML = HTML.replace( '$PKSAVEMSG$', MEU.genpksavemsg(version) );
       document.getElementById( 'Web3UI_0GENWALLETCREATE' ).innerHTML = HTML;
     },
 
     netsection: {
-        start:  "<span class='topbar'>",
+        start:  "",
 
-        online:   "<label for='Web3UI_0networktoggle' id='Web3UI_0networktoggledescr' class='toggler dark menu left'>Network</label>" +
+        online: "<span class='topbar'>" +
+                  "<label for='Web3UI_0networktoggle' id='Web3UI_0networktoggledescr' class='toggler dark menu left'>Network</label>" +
                   "<input type='checkbox' id='Web3UI_0networktoggle' class='toggler'></input>" +
                   "<span class='toggle long closed'>" +
                     "<span class='subsec'>" +
@@ -94,7 +95,7 @@ var MEU = {
                       ' (required to sign: ETH=1, ETC=61, Testnet=11155111) ' +
                       '<br/><br/>' +
                       'Free Testnet ETH can be obtained from a ' + 
-                            '<a class="dark" href="https://faucet.sepolia.dev" target="_blank">faucet</a>. ' +
+                            '<a class="dark" href="https://duckduckgo.com/?q=ethereum+sepolia+faucet" target="_blank">faucet</a>. ' +
                       '<br/><br/>' +
 
                       'Some providers: ' +
@@ -119,7 +120,8 @@ var MEU = {
                     "</span>" +
                   "</span>",
 
-        nosign:   "<label for='Web3UI_0networktoggle' id='Web3UI_0networktoggledescr' class='toggler menu left dark'>Network</label>" +
+        nosign: "<span class='topbar'>" +
+                  "<label for='Web3UI_0networktoggle' id='Web3UI_0networktoggledescr' class='toggler menu left dark'>Network</label>" +
                   "<input type='checkbox' id='Web3UI_0networktoggle' class='toggler'></input>" +
                   "<span class='toggle long closed'>" +
                     "<span class='subsec'>" +
@@ -151,13 +153,16 @@ var MEU = {
                     "</span>" +
                   "</span>",
 
-        offline:  'Chain ID: ' +
-                  '<input type="text" id="Web3UI_0network_chainid" class="net int dark" value="1" ' + 
+        offline: "<span class='topbar scrollx'>" +
+                   '<span>' + 
+                     'Chain ID: ' +
+                     '<input type="text" id="Web3UI_0network_chainid" class="net int dark" value="1" ' + 
                                             'oninput="MEU.resetchainid();" onchange="MEU.resetconnection();"/>' +
-                  ' (required to sign: ' +
-                        '<span class="tt donate dark" onclick="MEU.resetchainid(1);">ETH=1</span>, ' + 
-                        '<span class="tt donate dark" onclick="MEU.resetchainid(61);">ETC=61</span>, ' + 
-                        '<span class="tt donate dark" onclick="MEU.resetchainid(11155111);">Testnet=11155111</span>)',
+                     ' (required to sign: ' +
+                          '<span class="tt donate dark" onclick="MEU.resetchainid(1);">ETH=1</span>, ' + 
+                          '<span class="tt donate dark" onclick="MEU.resetchainid(61);">ETC=61</span>, ' + 
+                          '<span class="tt donate dark" onclick="MEU.resetchainid(11155111);">Testnet=11155111</span>)' +
+                   '</span>',
 
         close:  '</span>',
     },
@@ -168,6 +173,86 @@ var MEU = {
                         (version ? (version=='offline'?MEU.netsection.offline:MEU.netsection.nosign) : MEU.netsection.online) + 
                         MEU.netsection.close;
       document.getElementById( 'Web3UI_0NETWORK' ).innerHTML = HTML;
+    },
+
+    hd: {start: 
+        "<h1 class='topbargap'>$OFFLINE$Minimal Ethereum Utilities" +
+          "<div class='mbr'><span class='icon $TOOL$'></span>$TITLE$" +
+            "<label for='Web3UI_0LINKS_infotoggle' class='toggler sameline menu right'></label>" +
+          "</div>" +
+        "</h1>" +
+        "<div class='maincomments'>" +
+          "<input type='checkbox' id='Web3UI_0LINKS_infotoggle' class='toggler'></input>" +
+          "<span class='toggle xlong closed'>" +
+            "<span class='subsec min'>",
+        
+        content: {
+          payment: 
+            "<br/><br/>" +
+            "Gas required to send a payment to a basic account is 21000 units; " + 
+            "more gas is needed to send payments to contracts. " +
+            "<br/><br/>" +
+            "<a href='wallet.html'>Create a wallet</a>",
+          contract: 
+            "<br/><br/>" +
+            "Contract's ABI (schema that describes contract's functionality) is used to generate UI. " +
+            "ABIs for some common contracts are preloaded. " +
+            "Strange behaviors can result if ABI does not match contract " + 
+            "(an ERC20 ABI should not be used for an NFT contract and vice versa). " +
+            "<br/><br/>" +
+            "The preloaded Admin ABIs are representative of common contract patterns but are provided for reference. " +
+            "Admin functions, " +
+            "such as mint, haven't been standardized and may differ between contracts, " +
+            "so admins should use ABIs specific to each contract.",
+          deploy: 
+            "<br/><br/>" +
+            'If contract has a special initializer ("constructor"), the ABI is required, otherwise enter [ ] into ABI box. ' +
+            "Deployments often require substantial quantities of gas " + 
+            "(an ERC721 NFT deployment can consume more than 3,000,000 units of gas)."
+        },
+
+        contentonline: {
+          payment: 
+              "Signs and sends payment transactions. ",
+          contract: 
+              "Queries and transacts directly with a contract. ",
+          deploy: 
+              "Deploys an instance of a contract. "
+        },
+        contentoffline: {
+          payment: 
+              "Signs and saves payment transactions to be sent to the network. ",
+          contract: 
+              "Signs and saves transactions to be sent to a contract. ",
+          deploy: 
+              "Signs and saves deploy transactions to be sent to the network. "
+        },
+
+        onlinedanger:
+              "<br/><br/>" +
+              "<span class='failed'></span>Working with high-value accounts on a connected device is not recommended. " + 
+              "For more secure ways to sign transactions, " + 
+              "try the <a href='offline-install.html'>offline utilities</a>.",
+
+        close:
+              "$LINKSSEC$" +
+            "</span>" +
+          "</span>" +
+        "</div>" 
+    },
+
+    // add head section
+    genhd: function( tool, title, version, linkssec ) {
+      var HTML = MEU.hd.start.replace( '$OFFLINE$', version=='offline'?' Offline ':'' );
+      HTML = HTML.replace( '$TITLE$', title );
+      HTML = HTML.replace( '$TOOL$', tool );
+      HTML += version=='offline' ? MEU.hd.contentoffline[tool] : MEU.hd.contentonline[tool];
+      HTML += MEU.hd.content[tool] ? MEU.hd.content[tool] : "";
+      if (!version)
+        HTML += MEU.hd.onlinedanger;
+      HTML += MEU.hd.close;
+      HTML = HTML.replace( '$LINKSSEC$', linkssec ? linkssec : "" );
+      document.getElementById( 'Web3UI_0HD' ).innerHTML = HTML;
     },
 
     console: "<div class='console toggle long closed' id='Web3UI_0broadcastconsole_foldpane'>" +
@@ -193,7 +278,7 @@ var MEU = {
                   '</p>',
 
         offline:  '<p class="foot">' +
-                    '<a href="index.html">All Offline Utilties</a>' +
+                    '<a href="index.html">All Offline Utilities</a>' +
                     '<br/><br/>' +
                     'Donations: <tt onclick="MEU.setdonate();" class="donate">$DONATE$</tt>' +
                     '<a href="" class="dispnone" id="Web3UI_0network_donatepop"></a>' +
@@ -202,7 +287,7 @@ var MEU = {
                   '</p>',
     },
 
-    timestamp: "2021-2023 cc-by-sa, version 0.60 beta (May 2023). " +
+    timestamp: "2021-2023 cc-by-sa, version 0.70 beta (July 2023). " +
                '<span class="">This software is provided "as is", ' +
                'with the hope that it will be useful, but without warranty of any kind.</span>',
 
@@ -233,7 +318,7 @@ var MEU = {
     resetnetworkinfo: function( chainid, setprov ) {
       Web3UI.Wallet.clrwmsg();
       var chid = Web3UI.Utils.getv( 'Web3UI_0network_chainid', chainid?chainid:"" );
-      var n = "Network: ";
+      var n = "<span class='gray'>Network: </span>";
       var prov = "";
       if (chid == 1)
         n += "Ethereum Mainnet (ETH)", prov = "https://cloudflare-eth.com";
@@ -279,39 +364,52 @@ var MEU = {
         te.checked = false;
     },
 
-    rooturl: "https://gregsidal.github.io/min-wallets",
+    rooturl: {
+           before: "<span class='tt url clickable' onclick='Web3UI.Utils.Qr.select(this)'>" + 
+                      "https://gregsidal.github.io/min-wallets/",
+           after: "</span>"
+    },
 
     links: {
         hd:     '<span class="subsec links">Use an online device to:',
         start:  '<br/><br/>',
         params: 'Retrieve parameters needed to sign transactions (account nonce and gas price): ' + 
-                '<br/><tt>$ROOTURL$/address.html</tt>',
+                '<br/>$ROOTURLBEFORE$address.html$ROOTURLAFTER$',
         broad:  'Send saved transactions:' +
-                '<br/><tt>$ROOTURL$/broadcast.html</tt>',
+                '<br/>$ROOTURLBEFORE$broadcast.html$ROOTURLAFTER$',
         call:   "Query contract: " +
-                '<br/><tt>$ROOTURL$/contract.html</tt>',
+                '<br/>$ROOTURLBEFORE$contract.html$ROOTURLAFTER$',
         deploy: 'Query deployed contract: ' +
-                '<br/><tt>$ROOTURL$/contract.html</tt>',
+                '<br/>$ROOTURLBEFORE$contract.html$ROOTURLAFTER$',
         index:  '' +
-                '<tt>$ROOTURL$/index.html</tt>',
+                '$ROOTURLBEFORE$index.html$ROOTURLAFTER$',
         end:    '',
         foot:   '</span>'
     },
 
     // make a link message
     mklinkmsg: function( linkmsg ) {
-      return MEU.links.start + MEU.links[linkmsg].replace('$ROOTURL$',MEU.rooturl) + MEU.links.end;
+      var l = MEU.links[linkmsg].replace( '$ROOTURLBEFORE$', MEU.rooturl.before );
+      l = l.replace( '$ROOTURLAFTER$', MEU.rooturl.after );
+      return MEU.links.start + l + MEU.links.end;
+    },
+
+    // gen link msgs
+    genlinkmsgs: function( linkmsgs ) {
+      var HTML = "";
+      if (linkmsgs) {
+        HTML = MEU.links.hd;
+        for( var i=0; i<linkmsgs.length; i++ )
+          HTML += MEU.mklinkmsg( linkmsgs[i] );
+        HTML += MEU.links.foot;
+      }
+      return HTML;
     },
 
     // gen link msgs section
-    genlinks: function( offline, linkmsgs ) {
-      if (linkmsgs) {
-        linksHTML = MEU.links.hd;
-        for( var i=0; i<linkmsgs.length; i++ )
-          linksHTML += MEU.mklinkmsg( linkmsgs[i] );
-        linksHTML += MEU.links.foot;
-        MEU.gete( 'Web3UI_0LINKS' ).innerHTML = linksHTML;
-      }
+    genlinks: function( linkmsgs ) {
+      if (linkmsgs)
+        MEU.gete( 'Web3UI_0LINKS' ).innerHTML = MEU.genlinkmsgs( linkmsgs );
     },
 
     // helper
@@ -331,7 +429,7 @@ var MEU = {
     setdonate: function() {
       if (MEU.gete( 'Web3UI_0account_toaddress' )) {
         if (!MEU.gete( 'Web3UI_0account_toaddress' ).value)
-          MEU.gete( 'Web3UI_0account_toaddress' ).value = MEU.donationAddress;
+          Web3UI.Utils.input( 'Web3UI_0account_toaddress', MEU.donationAddress );
       }
       else
         if (MEU.gete( 'Web3UI_0network_donatepop' )) {
@@ -350,13 +448,15 @@ var MEU = {
         MEU.setto( to );
     },
 
+    repourl: "https://github.com/gregsidal/min-wallets/",
+
     version: '',
 /*      '<span class="beta"> ' +
         'Version 0.60 (released May 2023). ' +
         'Reports of bugs or other issues can be submitted to the ' +
         "project's <a href='https://github.com/gregsidal/min-wallets/'>GitHub page</a>. " + 
         'Instructions for using Testnet are provided at the bottom of this page. ' +
-      '</span>',  
+      '</span>',
 */
     versionoffline: '',
 /*      '<span class="beta"> ' +
@@ -375,11 +475,6 @@ var MEU = {
     highvalueassetsmsg:
       '<span class="highvalue">Using an online device to manage high value assets is not recommended. ' +
       'For more secure ways to manage assets, try the <a href="offline-install.html">offline wallet tools</a>.</span>',
-    pksavemsg:
-      "<span class='beta nomargin small'>Private key will be encrypted when saved if a password is provided. " +
-      "Keys of important accounts should also be written down or printed out.</span>",
-
-    // gen messages
     genmsgs: function( offline ) {
       if (MEU.gete( 'Web3UI_0UIGENWALLET' ))
         Web3UI.Gen.HTML.genwallet( offline );
@@ -400,9 +495,40 @@ var MEU = {
         MEU.gete( 'Web3UI_0OFFLINEZIP' ).innerHTML = MEU.offlinezip;
     },
 
+    pksavemsg: {
+      start:
+      "<span class='beta nomargin small alert'>" +
+        "Private key will be encrypted when saved if a password is provided.  Wallet files are saved only to local device." +
+        "<br/><br/>" +
+        "<span class='failed'></span>" +
+        "Private keys of new wallets should be " +
+        "written down or printed out before the associated addresses are used. " +
+        "If a wallet file is damaged or a password is lost, " + 
+        "the wallet can only be recovered from the full private key." + 
+        "",
+      online: "",
+        /* "<br/><br/>" +
+        "Wallets used to sign transactions on a connected device are never fully secure, " +
+        "regardless of which software is used to open them or " +
+        "the strength of the passwords used to encrypt them.", */
+      end:
+      "</span>"
+    },
+    genpksavemsg: function( version ) {
+      var sm = MEU.pksavemsg.start;
+      if (!version)
+        sm += MEU.pksavemsg.online;
+      sm += MEU.pksavemsg.end;
+      return sm;
+    },
+
     // set up wallet page
     onload: function( offline, linkmsgs ) {
-      MEU.genlinks( offline, linkmsgs );
+      if (!(typeof QRIO === 'undefined')) {
+        QRIO.generator.insertHTML();
+        QRIO.reader.insertHTML();
+      }
+      MEU.genlinks( linkmsgs );
       MEU.genheadfoot( offline );
       MEU.genmsgs( offline );
       //Web3UI.Network.setconnection();
@@ -410,29 +536,33 @@ var MEU = {
       MEU.resetconnection( 1 );
     },
 
+    onload2: function( tool, title, version, linkmsgs ) {
+      MEU.genhd( tool, title, version, MEU.genlinkmsgs(linkmsgs) );
+      MEU.onload( version );
+    },
+
     indexfoot: {
         online:  '<p class="foot">' +
 
                    '$TIMESTAMP$' +
                    '<br/><br/>' +
-                   '<tt>$ROOTURL$/index.html</tt> ' +
+                   'Source/latest version: <tt>$REPOURL$</tt> ' +
                    '<br/><br/> ' +
                    'Donations: <tt onclick="MEU.setdonate();" class="donate">$DONATE$</tt>' +
                    '<a href="" class="dispnone" id="Web3UI_0network_donatepop"></a>' +
                    '<br/><br/> ' +
 
         "<span class='control comment'>" +
-          "<label for='Web3UI_00foot_infotoggle' class='toggler menu'></label>" +
+          "<label for='Web3UI_00foot_infotoggle' class='toggler menu left'></label>" +
           "<input type='checkbox' id='Web3UI_00foot_infotoggle' class='toggler'></input>" +
           "<span class='toggle long closed'>" +
             "<span class='subsec'>" +
               "<span class='control comment'>" +
 
-'Working with high value accounts on a connected device is not recommended. ' +
-'The <a href="offline-install.html">offline wallet tools</a> ' +
-'can be used generate wallet keys and sign transactions on an air-gapped device.' +
+'<span class="failed"></span>Working with high value accounts on a connected device is not recommended. ' +
+'To manage accounts using an air-gapped device, try the <a href="offline-install.html">offline wallet tools</a>.' +
 '<br/><br/> ' +
-'When online, third-party relays are used to query the blockchain and broadcast transactions. ' + 
+'When working online, third-party providers (relays) are used to query the blockchain and broadcast transactions. ' + 
 'Since the relays may log IP addresses if they choose to do so, use of Tor browser is recommended.' +
 '<br/><br/> ' +
 '<tt>Web3.js</tt>, from Ethereum foundation, is used to ' + 
@@ -448,7 +578,7 @@ var MEU = {
         offline: '<p class="foot"> ' +
                    '$TIMESTAMP$' +
                    '<br/><br/>' +
-                   '<tt>$ROOTURL$/index.html</tt> ' +
+                   'Source/latest version: <tt>$REPOURL$</tt> ' +
                    '<br/><br/> ' +
                    'Donations: <tt onclick="MEU.setdonate();" class="donate">$DONATE$</tt>' +
                    '<a href="" class="dispnone" id="Web3UI_0network_donatepop"></a>' +
@@ -472,15 +602,15 @@ var MEU = {
                  '</p>'
     },
 
-    offlinezip:  '<a href="min-wallets-offline-v060.zip" ' +  
-                    'download="min-wallets-offline-v060.zip"><tt>min-wallets-offline-v060.zip</tt></a> ',
+    offlinezip:  '<a href="min-wallets-offline-v070.zip" ' +  
+                    'download="min-wallets-offline-v070.zip"><tt>min-wallets-offline-v070.zip</tt></a> ',
 
     // setup index page
     onindexload: function( offline ) {
       var HTML = MEU.indexfoot.online;
       if (offline)
         HTML = MEU.indexfoot.offline;
-      HTML = HTML.replace( '$ROOTURL$', MEU.rooturl );
+      HTML = HTML.replace( '$REPOURL$', MEU.repourl );
       HTML = HTML.replace( '$DONATE$', MEU.donationAddress );
       HTML = HTML.replace( '$TIMESTAMP$', MEU.timestamp );
       MEU.gete( 'Web3UI_0FOOT' ).innerHTML = HTML;
@@ -491,9 +621,9 @@ var MEU = {
     // setup plain page
     onplainload: function( offline, connect ) {
       var HTML = MEU.indexfoot.plon;
-      if (offline) {
+      /*if (offline) {
         HTML = MEU.indexfoot.ploff.replace( '$ROOTURL$', MEU.rooturl );
-      }
+      }*/
       HTML = HTML.replace( '$DONATE$', MEU.donationAddress );
       HTML = HTML.replace( '$TIMESTAMP$', MEU.timestamp );
       MEU.gete( 'Web3UI_0FOOT' ).innerHTML = HTML;
@@ -502,16 +632,66 @@ var MEU = {
         //Web3UI.Network.setconnection();
         MEU.resetconnection( 1 );
       MEU.parseurl();
+      if (!(typeof QRIO === 'undefined')) {
+        QRIO.generator.insertHTML();
+        QRIO.reader.insertHTML();
+      }
     },
 
 
-erc20contractaddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-erc20abi:
-[
-    {
+presetcontracts: {
+  "Mainnet USDT (ERC20)" : {
+    address:  "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    abi: "ERC20"
+  },
+  /* "ENS Mainnet (ERC721)" : {
+    address:  "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+    abi: "ERC721"
+  }, */
+  "Generic token (ERC20)" : {
+    address:  "",
+    abi: "ERC20"
+  },
+  "ERC20 Admin" : {
+    address:  "",
+    abi: "ERC20Admin"
+  },
+  "Generic NFT (ERC721)" : {
+    address:  "",
+    abi: "ERC721"
+  },
+  "ERC721 Admin" : {
+    address:  "",
+    abi: "ERC721Admin"
+  },
+  "Other" : {
+    address:  "",
+    abi: null
+  }
+},
+presetabis: {
+  "ERC20": {
+    comments:  "Fungible Tokens schema",
+    abi: 
+    [
+      {
         "constant": true,
         "inputs": [],
         "name": "name",
+        "outputs": [
+{
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "symbol",
         "outputs": [
             {
                 "name": "",
@@ -521,8 +701,151 @@ erc20abi:
         "payable": false,
         "stateMutability": "view",
         "type": "function"
-    },
-    {
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint8"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "_owner",
+                "type": "address"
+            }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "_owner",
+                "type": "address"
+            },
+            {
+                "name": "_spender",
+                "type": "address"
+            }
+        ],
+        "name": "allowance",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "fallback"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "name": "spender",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "Approval",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "name": "to",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "Transfer",
+        "type": "event"
+      },
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+      {
         "constant": false,
         "inputs": [
             {
@@ -544,22 +867,8 @@ erc20abi:
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "totalSupply",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
+      },
+      {
         "constant": false,
         "inputs": [
             {
@@ -585,153 +894,555 @@ erc20abi:
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "decimals",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint8"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "_owner",
-                "type": "address"
-            }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-            {
-                "name": "balance",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "symbol",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_to",
-                "type": "address"
-            },
-            {
-                "name": "_value",
-                "type": "uint256"
-            }
-        ],
-        "name": "transfer",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "_owner",
-                "type": "address"
-            },
-            {
-                "name": "_spender",
-                "type": "address"
-            }
-        ],
-        "name": "allowance",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "fallback"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "name": "spender",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "name": "value",
-                "type": "uint256"
-            }
-        ],
-        "name": "Approval",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "name": "value",
-                "type": "uint256"
-            }
-        ],
-        "name": "Transfer",
-        "type": "event"
-    }
-],
+      }
+    ]
+  },
+  "ERC20Admin": {
+    comments:  "NFT admin contract schema",
+    abi: 
+
+[
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "symbol",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "decimals",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint256",
+				"name": "initialMintAmount",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			}
+		],
+		"name": "allowance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "mint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+
+  },
+  "ERC721": {
+    comments:  "NFT contract schema",
+    abi: 
+[
+  {
+    "name": "name",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "symbol",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "totalSupply",
+    "type": "function",
+    "constant": true,
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "payable": false,
+    "stateMutability": "view"
+  },
+  {
+    "name": "ownerOf",
+    "type": "function",
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "outputs": [{"internalType": "address", "name": "owner", "type": "address"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "tokenURI",
+    "type": "function",
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "balanceOf",
+    "type": "function",
+    "inputs": [{"internalType": "address", "name": "owner", "type": "address"}],
+    "outputs": [{"internalType": "uint256", "name": "balance", "type": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "getApproved",
+    "type": "function",
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "outputs": [{"internalType": "address", "name": "operator", "type": "address"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "isApprovedForAll",
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "owner", "type": "address"}, 
+      {"internalType": "address", "name": "operator", "type": "address"}
+    ],
+    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "safeTransferFrom",
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "from", "type": "address"}, 
+      {"internalType": "address", "name": "to", "type": "address"},
+      {"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "approve", 
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "to", "type": "address"}, 
+      {"internalType": "uint256", "name": "tokenId", "type": "uint256"}
+    ],
+    "outputs": [], 
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "setApprovalForAll", 
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "operator", "type": "address"}, 
+      {"internalType": "bool", "name": "_approved", "type": "bool"}
+    ], 
+    "outputs": [], 
+    "stateMutability": "nonpayable"
+  }
+    ]
+  },
+  "ERC721Admin": {
+    comments:  "NFT contract schema with minting and other admin functions",
+    abi: 
+[
+  {
+    "name": "Approval",
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "internalType": "address", "name": "owner", "type": "address"}, 
+      {"indexed": true, "internalType": "address", "name": "approved", "type": "address"}, 
+      {"indexed": true, "internalType": "uint256", "name": "tokenId", "type": "uint256"}
+    ]
+  },
+  {
+    "name": "ApprovalForAll",
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "internalType": "address", "name": "owner", "type": "address"}, 
+      {"indexed": true, "internalType": "address", "name": "operator", "type": "address"}, 
+      {"indexed": false, "internalType": "bool", "name": "approved", "type": "bool"}
+    ]
+  },
+  {
+    "name": "Transfer",
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "internalType": "address", "name": "from", "type": "address"}, 
+      {"indexed": true, "internalType": "address", "name": "to", "type": "address"}, 
+      {"indexed": true, "internalType": "uint256", "name": "tokenId", "type": "uint256"}]
+  },
+  {
+    "name": "name",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "symbol",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "totalSupply",
+    "type": "function",
+    "constant": true,
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "payable": false,
+    "stateMutability": "view"
+  },
+  {
+    "name": "ownerOf",
+    "type": "function",
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "outputs": [{"internalType": "address", "name": "owner", "type": "address"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "tokenURI",
+    "type": "function",
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "balanceOf",
+    "type": "function",
+    "inputs": [{"internalType": "address", "name": "owner", "type": "address"}],
+    "outputs": [{"internalType": "uint256", "name": "balance", "type": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "getApproved",
+    "type": "function",
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "outputs": [{"internalType": "address", "name": "operator", "type": "address"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "isApprovedForAll",
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "owner", "type": "address"}, 
+      {"internalType": "address", "name": "operator", "type": "address"}
+    ],
+    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+    "stateMutability": "view"
+  },
+  {
+    "name": "supportsInterface",
+    "type": "function",
+    "inputs": [{"internalType": "bytes4", "name": "interfaceId", "type": "bytes4"}],
+    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+    "stateMutability": "view"
+  },
+  {
+    "inputs": [
+      {"internalType": "address", "name": "to", "type": "address"},
+      {"internalType": "string", "name": "uri", "type": "string"}
+    ],
+    "name": "safeMint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "name": "transferFrom",
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "from", "type": "address"}, 
+      {"internalType": "address", "name": "to", "type": "address"}, 
+      {"internalType": "uint256", "name": "tokenId", "type": "uint256"}
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "safeTransferFrom",
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "from", "type": "address"}, 
+      {"internalType": "address", "name": "to", "type": "address"},
+      {"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "safeTransferFrom", 
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "from", "type": "address"}, 
+      {"internalType": "address", "name": "to", "type": "address"},
+      {"internalType": "uint256", "name": "tokenId", "type": "uint256"}, 
+      {"internalType": "bytes", "name": "data", "type": "bytes"}
+    ], 
+    "outputs": [], 
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "approve", 
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "to", "type": "address"}, 
+      {"internalType": "uint256", "name": "tokenId", "type": "uint256"}
+    ],
+    "outputs": [], 
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "setApprovalForAll", 
+    "type": "function",
+    "inputs": [
+      {"internalType": "address", "name": "operator", "type": "address"}, 
+      {"internalType": "bool", "name": "_approved", "type": "bool"}
+    ], 
+    "outputs": [], 
+    "stateMutability": "nonpayable"
+  }
+    ]
+  },
+  "Other": {
+    comments:  "",
+    abi: null
+  }
+},
 
     insertabisec: function( deploy, offline ) {
-      Web3UI.Gen.HTML.insertabisection( deploy, deploy?"":MEU.erc20abi, deploy?"":MEU.erc20contractaddress, offline );
+      //Web3UI.Gen.HTML.insertabisection( deploy, deploy?"":MEU.erc20abi, deploy?"":MEU.erc20contractaddress, offline );
+      Web3UI.Gen.HTML.insertabi( deploy, offline, MEU.presetcontracts, MEU.presetabis );
     },
 
     Miner: {
@@ -834,10 +1545,12 @@ erc20abi:
             "</span>" +
             "<span class='control med'>" +
               "<span class='label tag'>Address</span>" +
-              "<i class='address' id='Miner_address'></i>" +
+              "<i class='address selectable' id='Miner_address' onclick='Web3UI.Utils.Qr.select(this)'></i>" +
             "</span>" +
           "</span>" +
-          "<i id='Miner_numtries'></i>" +
+          "<span class='control'>" +
+            "<i id='Miner_numtries'></i>" +
+          "</span>" +
         "</span>" +
       "</span>" +
       "<span class='toggle long closed' id='Web3UI_0account_savefilename_foldpane'>" +
@@ -868,7 +1581,7 @@ erc20abi:
     genUI: function( version ) {
       if (MEU.gete( 'Web3UI_0UIGENMINER' )) {
         var HTML = MEU.Miner.UI;
-        HTML = HTML.replace( '$PKSAVEMSG$', MEU.pksavemsg );
+        HTML = HTML.replace( '$PKSAVEMSG$', MEU.genpksavemsg(version) );
         document.getElementById( 'Web3UI_0UIGENMINER' ).innerHTML = HTML;
         MEU.Miner.setconnection();
       }

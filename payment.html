@@ -12,33 +12,26 @@
     <script src="lib/web3/js/web3.min.js" ></script>
     <script src="w3ui.js"                 ></script>
     <script src="meu.js"                  ></script>
+
+    <link  href="lib/qr/qrio.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/qr/qrcode.js"></script>
+    <script type="text/javascript" src="lib/qr/qrio.js"></script>
   </head>
 
-  <body onload="MEU.onload();">
+  <body onload="MEU.onload2('payment','Payments');">
 
     <div id="Web3UI_0NETWORK"></div>
 
-    <h1 class="topbargap">Minimal Ethereum Utilities <div class="mbr">Payments</div></h1>
-
-    <p class="descr">
-      <label for='Web3UI_0LINKS_infotoggle' class='toggler menu'>Send payment transactions.</label>
-      <input type='checkbox' id='Web3UI_0LINKS_infotoggle' class='toggler'></input>
-      <span class='toggle long closed'>
-        <span class='subsec'>
-      <span id="Web3UI_0VERSION"></span>
-      Using an online device to manage high-value accounts is not recommended.
-      For a more secure way to make payments, try the <a href="offline-install.html">offline tools</a>.
-      <br/><br/>
-      <a href="wallet.html">Create a wallet</a>
-        </span>
-      </span>
-    </p>
+    <div id="Web3UI_0HD"></div>
 
     <span id="Web3UI_0UIGENWALLET"></span>
 
     <span id="Web3UI_0UIGENPAYTX"></span>
 
     <div id="Web3UI_0FOOT"></div>
+
+    <div id="qrio-generator-html"></div>
+    <div id="qrio-reader-html"></div>
 
   </body>
 

@@ -18,7 +18,7 @@
 /*section*/
       p {border:1px solid #ddd; padding:1em; background-color:rgb(250,250,252); margin-bottom:3.1em;}
       /*p.wallet {background-color:rgb(237,245,240); padding-bottom:1.2em;}*/
-      p.infobox {font-size:95%; padding-top:1.1em; padding-bottom:1.1em;}
+      p.infobox {font-size:100%; padding-top:1.1em; padding-bottom:1.25em;}
       p.descr, p.break, p.foot, p.appendix, p.section {border:0; padding:0; background-color:inherit;}
       p.wallet, p.method, p.call, p.transact {}
       p.descr, p.section {margin-bottom:3em; font-size:90%;}
@@ -27,10 +27,13 @@
       p.descr:empty {margin-bottom:2em;}
       p.descr > b {font-size:110%; padding-top:0.5em;}
       p.break {font-size:120%;}
-      p.foot, p.appendix {font-size:80%;}
+      p.foot, p.appendix {font-size:78%;}
       /* p.appendix {border-top:1px dashed rgb(130,130,130); padding-top:0.3em; margin:0;} */
       p.foot {margin-top:0.0em; margin-bottom:3em;}
       ul {font-size:85%;}
+
+      .maincomments {margin-top:0.3em; margin-bottom:1.8em; font-size:88%;}
+      .maincomments > .toggle > .subsec {margin-top:0.7em; margin-bottom:1.3em;}
 
 /*subsection*/
       .subsec, .control, .toggle, .nest, .indent, .tag, .console {display:block; margin:0; padding:0;}
@@ -40,12 +43,13 @@
       .subsec.min {margin-top:0;}
       .subsec:empty {display:none;}
       .control, .nest {margin-top:0.3em;}
+      .control.zero {margin-top:0;}
       .control.minmed {margin-top:0.4em;}
       .control.med {margin-top:1.0em;}
       .control.max {margin-top:1.5em;}
       .indent, .nest {margin-left:1.5em;}
       .control.struct {margin-top:1em; margin-bottom:1em;}
-      .control.array {margin-top:0.7em; margin-bottom:0.7em;}
+      .control.array {margin-top:0.7em; margin-bottom:0.7em;}ng
       .control.pay {margin-bottom:1.2em;}
       .control:first-child, .nest:first-child {margin-top:0;}
       .control.sameline {display:inline-block;}
@@ -61,6 +65,7 @@
       .toggle.short {max-height: 6em;}
       .toggle.med {max-height: 17em;}
       .toggle.long {max-height: 25em;}
+      .toggle.xlong {max-height: 50em;}
       .toggle.closed {max-height: 0; transition: max-height 0.7s ease-out;}
 
 /*console*/
@@ -93,44 +98,104 @@
       .consolemsg.almost {background-color: rgba(170,250,30,0.06);}
       .consolemsg.confirmed {background-color: rgba(40,250,40,0.06);}
 
+      .consolemsg > .label, .consolemsg > span > .label {font-family:sans-serif; font-size:100%;}
+
 /*top bar*/
       .topbar {border: 0; margin: 0; padding: 0.4em 0.60em; max-width: 100%;}
       .topbar {position: absolute; left: 0; top: 0; right: 0; bottom: auto;}
       .topbar {font-size: 75%; color: rgb(245,245,245); background-color: rgb(120,120,120);}
       .topbar > .toggle > .subsec {padding-bottom: 0.4em;}
 
+/*
       .menu:not(.left):after {content:'...'; margin-left:0.8em;}
       .menu:not(.left):empty:after {margin-left:0;}
-      .menu.left:before {content:'\2af6'; font-size:130%; margin:0; padding:0; margin-top:0.2em; margin-right:0.5em;}
+*/
+      /*.menu.left:before {content:'\2af6'; font-size:105%; margin:0; padding:0; margin-top:0.2em; margin-right:0.8em;}*/
+      .comment > .menu.left:before {content:'\2af6'; font-size:105%; margin:0; padding:0; margin-top:0.2em; margin-right:0.8em;}
+      .menu.right:before {content:'\2af6'; font-size:103%; margin:0; padding:0; margin-top:0.2em; margin-left:0.8em;}
 
 /*text*/
       h1, h2 {font-size:110%; padding-bottom:1.4em; padding-top:1em; margin:0;}
       h1.topbargap {margin-top:1.2em;}
-      h2 {padding-top:0.6em;}
+      h2 {padding-top:0.6em; padding-bottom:1.5em;}
       b {font-size:105%; font-weight:bold; display:block;}
       i, .tt {font-family:monospace; word-wrap:break-word;}
       .tt {font-size: 110%;}
-      i {font-size:110%; color:#283; font-style:normal; padding-top:1em; display:block;}
+      i {font-size:117%; color:#283; font-style:normal; padding-top:1em; display:block;}
       i.top {padding-top:0;}
       i.gap {padding-top:1.9em;}
-      i.code {font-size:90%; color:rgb(90,90,120); padding-top:1.7em;}
-      i.pre {font-size:96%; color:rgb(20,20,130); padding-top:1.7em; white-space:pre; overflow-x: auto;}
+      i.code {font-size:90%; color:rgb(20,40,130); padding-top:1.7em;}
+      i.pre {font-size:96%; color:rgb(20,40,130); padding-top:1.7em; white-space:pre; overflow-x:auto;}
       i:empty {padding:0;}
-      i > .failed {color:rgb(235,90,90);}
 
-      .walletinfo > .control > .label {font-size:75%;   display:none;}
-      .walletinfo > .control > i {padding:0; color:rgb(30,30,130); min-height:1.5em;}
+      i > .failed, i > span > .failed {color:rgb(235,90,90);}
+      .failed:before {content:'\26a0'; margin-right:0.3em;}
+      .consolemsg.failed:before {content:''; margin-right:0;}
+      .confirmed:before {content:'\2714'; margin-right:0.3em;} /*2705(chk in box)*/
+      .consolemsg.confirmed:before {content:''; margin-right:0;}
+
+      i > .label, i > span > .label {font-family:sans-serif; font-size:73%; color:#666;}
+      i > .txreceipt {
+        display:inline-block; padding:0.15em 0.55em; padding-bottom:0.5em; background-color:#ebebe4;
+        border:2px dashed rgba(180,180,180,0.9); border-radius:0.3em;
+      }
+      i > .txreceipt, i > .txerr {color:#666;}
+      i > .txreceipt > .confirmed {color:#283;}
+
+      .walletinfo > .control > .label {font-size:75%; display:none;}
+      .walletinfo > .control > i {padding:0; min-height:1.5em; color:rgb(70,70,70);}
+      /*.walletinfo > .control > i.address {color:rgb(40,40,160);}*/
+      .walletinfo > .control > i.address {color:#24c;}
       .walletinfo > .control > i:before {color:rgb(0,0,0); white-space:nowrap;}
-      .walletinfo > .control > i.key:before {content:'\26bf'; margin-right:0.3em;}
-      .walletinfo > .control > i.address:before {content:'\2709'; margin-right:0.3em;}
+      .walletinfo > .control > i.address:before {font-size:110%; content:'\2709'; color:#24c; margin-right:0.3em;}
+      .walletinfo > .control > i.address::after {
+        content:'\25a6'; margin-left:0.3em; font-size:105%; position:relative; top:0.05em;
+      }
+
+      .walletinfo > .control > i.key:before {content:'\26bf'; color:#c33; margin-right:0.3em;}
 
       .txinfo > i, .statusinfo > i {padding:0; padding-top:1.1em; min-height:1.5em;}
       .txinfo > i:first-child, .statusinfo > i:first-child {padding:0;}
+      .statusinfo > i:last-child {min-height:auto;}
+
+      .toollist > span {position:relative; display:block; margin-bottom:0.6em; font-size:105%; height:2em;}
+      .toollist > span:last-child {margin-bottom:0.2em;}
+
+      .toollist > span > a {color:inherit; text-decoration:none;}
+      .toollist > span > a:hover {color:rgb(220,85,100); text-decoration:underline;}
+
+      .toollist > span > a > .icon {position:relative; text-align:center; min-width:1.0em; margin-right:0.5em;}
+
+      .icon {display:inline-block; font-family:monospace; font-size:175%; min-width:1.35em;}
+      .mbr > .icon {font-size:175%; min-width:1.20em; font-weight:normal;}
+      @media all and (orientation:portrait) {
+        .icon {font-size:185%;}
+      }
+      .mbr > .icon.broadcast, .mbr > .icon.addressinfo {min-width:1.3em;}
+
+      .icon.addressinfo:before {content:'\2709';}
+      .icon.walletmgr:before {content:'\26bf'; font-size:90%;}
+      .icon.payment:before {content:'\261e';}
+      .icon.contract:before {content:'\2699';}
+      .icon.deploy:before {content:'\2692'; font-size:85%;}
+      .icon.vanity:before {content:'\2606';}
+      .icon.broadcast:before {content:'\260f'; font-size:90%;}
+
+      .icon.addressinfo:before {color:#57b;}
+      .icon.walletmgr:before {color:#e66;}
+      .icon.payment:before {color:#394;}
+      .icon.contract:before {color:#fa4;}
+      .icon.deploy:before {color:#984;}
+      .icon.vanity:before {color:#96e;}
+      .icon.broadcast:before {color:#097;}
+
+      .toollist > span > a > .icon.walletmgr, .toollist > span > a > .icon.deploy,
+      .toollist > span > a > .icon.broadcast {padding:0.15em 0;}
 
       tt {font-size:120%; word-wrap:break-word;}
       /*.warn {color:rgb(150,50,50);}*/
       .i {display:inline-block; font-style:italic;}
-      .beta {display:block; background-color:rgb(245,238,238); border:1px solid #ddd;}
+      .beta {display:block; background-color:rgb(245,232,232); border:1px solid #ddd;}
       .beta {font-size:85%; padding:0.5em; margin-top:0.2em; margin-bottom:0.3em;}
       .beta.nomargin {margin-top:0;}
       .tag, .beta.small {font-size:80%;}
@@ -146,6 +211,8 @@
       .li {display:block; margin-left:1.2em;}
       .li:before {content:'\2022'; padding-right:0.3em;}
 
+      .url::after {content: '\25a6' ; margin-left:0.3em; font-size:110%;}
+
 /*button*/
       button, textarea {display:block; margin:0; border:0; border-radius:0.2em;}
       button {font-size:95%; padding:0.3em 0.7em; color:#fff; background-color:rgb(110,115,150); cursor:pointer;}
@@ -154,25 +221,30 @@
       button.open {margin-top:0.3em;}
       button.send {margin-top:1em;}
       button.inline, button.sameline {display:inline-block;}
-      .subbtn, .menubtn {display:inline-block; padding:0.3em 0.7em; cursor:pointer;}
+      .subbtn, .menubtn {display:inline-block; padding:0.2em 0.5em; cursor:pointer;}
       .menubtn {font-size:110%; background-color:#888; color:#fff;}
       .menubtn.selected {background-color:yellow; color:#888;}
-      .subbtn {font-size:75%;  border:1px solid rgb(170,170,170); background-color:transparent;}
+      .subbtn {font-size:75%;  border:1px solid #ccc; border-radius:0.2em; background-color:transparent;}
       button.dispnone, button.hideifempty:empty, .dispnone {display:none;}
       button.inline {display:block; margin-top:0.2em;}
-     .subbtn.refresh {border:0; padding:0.1em 0.3em; font-size:100%;}
+     .subbtn.refresh, .subbtn.bug {border:0; padding:0.1em 0.3em; font-size:100%;}
      .subbtn.refresh:after {content: '\21BB' ;}
+     .subbtn.bug {position:relative; top:0.13em; border:0; padding:0 0.3em; font-size:115%;}
+     .subbtn.bug.qr:after {content: '\26f6' ;} /* 25a6 */
+     .subbtn.bug.qr.lg {font-size: 140%; left:0.3em; top:0.15em;}
+     .subbtn.attn {padding:0.26em 0.4em; background-color:transparent; background-color:rgba(110,115,200,0.0);}
 
       @media all and (hover: hover) {
         button:hover, .subbtn:hover, .menubtn:hover {color:#fff; background-color:rgb(220,90,110);}
       }
       button:active, .subbtn:active, .menubtn:active {color:#fff; background-color:rgb(220,90,110);}
-      button:disabled, .subbtn:disabled {color:#fff; background-color:rgb(220,220,220);}
+      button:disabled, .subbtn:disabled {color:#fff; background-color:rgb(220,220,220); cursor:auto;}
 
 
 /*input*/
       input {font-size:120%; text-overflow:ellipsis;}
       input, textarea {font-family:monospace; width:30em; margin:0; border:1px solid #ddd;}
+      select {margin:0; border:1px solid #ddd; padding: 0.15em 0.1em;}
       input[type="radio"] {width:inherit;}
 
       /*
@@ -183,10 +255,12 @@
 
       .filenametag.rawtx {margin-top:1.7em;}
       .net {width:24em;}
+      .bool {width:8em;}
       .num {width:14em;}
       .int {width:3em;}
       .net.int {width:5em;}
       .pk, .pass, .filename {width:99%; max-width:50em;}
+      select {max-width:99%;}
       textarea {width:99%; font-size:85%; height:15em;}
       input.net {margin-bottom:0.4em;}
       input.provider, input.chainid {margin-bottom:0.4em;}
@@ -198,11 +272,13 @@
 
       label.toggler {display:block; cursor:pointer;}
       label.toggler.sameline {display:inline-block; font-size:85%;}
+      label.toggler.sameline.hidden {display:none;}
       label.toggler:active {color:rgb(220,90,110);}
       input.toggler {position:absolute; display:none;}
       input.toggler:checked + .toggle {max-height: 10em; transition: max-height 0.7s ease-out;}
       input.toggler:checked + .toggle.med {max-height: 18em; transition: max-height 1.0s ease-out;}
       input.toggler:checked + .toggle.long {max-height: 30em; transition: max-height 1.3s ease-out;}
+      input.toggler:checked + .toggle.xlong {max-height: 50em; transition: max-height 1.6s ease-out;}
 
 /*link*/
       a {color:rgb(20,40,150);}
@@ -215,22 +291,22 @@
 /*title overrides*/
       .mbr {display:block;}
       h1 {font-size:80%;}
-      h1>.mbr {font-size:130%; padding-top:0.1em;}
+      h1>.mbr {font-size:130%; padding-top:0.01em;}
 
 /*phone overrides*/
       @media all and (orientation:portrait) {
         h1 {font-size:85%;}
-        h1 {margin-left:1.15em; margin-right:1.15em; padding-bottom:0em; padding-top:1.5em;}
+        h1 {margin-left:0.55em; margin-right:0.55em; padding-bottom:0em; padding-top:1.5em;}
         h1>.mbr {font-size:130%; padding-bottom:1.2em;}
         h1.topbargap {margin-top:2.3em;}
         h2 {font-size:110%;}
-        h2 {margin-left:0.90em; margin-right:0.90em; padding-top:1.0em;}
-        i {font-size:100%;}
+        h2 {margin-left:0.55em; margin-right:0.60em; padding-top:1.6em; padding-bottom:1.7em;}
+        i {font-size:105%;}
         tt {font-size:95%;}
         p.break {font-size:110%;}
         input {font-size:110%;}
         .x {font-family:"Courier", serif;}
-        input {max-width:99%; border:1px solid #ddd;}
+        input, select {max-width:99%; border:1px solid #ddd;}
         input[type="radio"] {width:inherit; display:inline-block;}
         button.inline {display:block; margin-top:0.2em;}
         .control.sameline {display:block;}
@@ -241,21 +317,30 @@
         body {font-size:93%;}
         body {margin:0; padding:0;}
         p {margin-top:0; margin-bottom: 2.50em; border:0;}
-        p.descr, p.break, p.foot, p.appendix, p.section {padding:0 1em;}
+        p.descr, p.break, p.foot, p.appendix, p.section {padding:0 0.7em;}
         p.descr.gap {margin-top:1.0em;}
         p.descr, p.section {margin-bottom:2.7em; font-size:85%;}
+        p.descr.index {margin-bottom:3.0em;}
         p.descr {margin-top:0.2em;}
         p.descr:empty {margin-bottom:1.25em;}
-        p.foot {font-size:70%;}
+        p.foot {font-size:74%;}
+        .maincomments {padding:0 0.7em; margin-top:0; margin-bottom:1.5em; font-size:85%;}
       }
 
       @media all and (max-width:520px) and (orientation:portrait) {
         h1 {font-size:75%;}
-        h2 {font-size:100%;}
+        h2 {font-size:100%; margin-left:0.6em; padding-top:1.0em; padding-bottom:1.5em;}
+
         p {margin-bottom: 2.20em;}
         p.descr.gap {margin-top:0.8em;}
-        p.descr, p.section {margin-bottom:2.3em;}
+        p.descr, p.section, p.descr.index {margin-bottom:2.4em;}
         p.descr:empty {margin-bottom:1.05em;}
+        p.foot {font-size:67%;}
+        .maincomments {margin-bottom:1.3em;}
+
+        .toollist > span {font-size:100%;}
+
+        i {font-size:100%;}
         b {font-size:90%;}
         .beta {font-size:75%;}
         .pbr, .sbr, .tsbr {display:block;}
@@ -274,8 +359,9 @@
 
       a.dark, .donate.dark, label.toggler.dark {color:rgb(235,235,235);}
       .topbar > label.toggler.dark {color:rgb(215,255,215); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+      .topbar > label.toggler.dark > .gray {color:rgb(215,215,215);}
       @media all and (hover: hover) {
-        a:hover, .donate:hover, label.toggler:hover {color:rgb(210,70,90);}
+        a:hover, .donate:hover, label.toggler:hover {color:rgb(220,85,100);}
         label.toggler.dark:hover, a.dark:hover, .donate.dark:hover {color:rgb(255,220,220);}
       }
       a:active, label.toggler:active, .donate:active {color:rgb(255,60,70);}
@@ -283,5 +369,10 @@
 
 
       .oneline {display:inline-block;}
-      .topbar > input {margin: 0.1em;}
+      .hidden {display:none;}
+      .topbar > span > input {margin: 0.1em;}
+      .topbar.scrollx {white-space: nowrap; overflow-x: auto;}
 
+      .hexscroll {display:block; max-height:15em; overflow-y:auto;}
+
+      .vertalign {vertical-align:bottom;}

@@ -12,10 +12,17 @@
     <script src="lib/web3/js/web3.min.js" ></script>
     <script src="w3ui.js"                 ></script>
     <script src="meu.js"                  ></script>
+
+    <link  href="lib/qr/qrio.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/qr/qrcode.js"></script>
+    <script type="text/javascript" src="lib/qr/qrio.js"></script>
   </head>
 
   <body onload="MEU.onplainload();">
-    <h1>Minimal Ethereum Utilities <div class="mbr">Vanity Address Miner</div></h1>
+
+    <h1>Minimal Ethereum Utilities 
+      <div class="mbr"><span class="icon vanity"></span>Vanity Address Miner</div>
+    </h1>
 
     <p class="descr">
       <span id="Web3UI_0HIGHVALUECREATEMSG"></span>
@@ -24,6 +31,8 @@
     <span id="Web3UI_0UIGENMINER"></span>
 
     <div id="Web3UI_0FOOT"></div>
+
+    <div id="qrio-generator-html"></div>
 
   </body>
 

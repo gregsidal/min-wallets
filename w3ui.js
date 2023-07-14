@@ -245,9 +245,19 @@ var Web3UI = {
       return (input.type.split('[]').length > 1);
     },
 
+    // determine if ABI arg is an address
+    isaddr: function( input ) {
+      return (input.type.toUpperCase().slice(0,7) == 'ADDRESS');
+    },
+
     // determine if ABI arg is a number
     isnum: function( input ) {
       return (input.type.toUpperCase().slice(0,4) == 'UINT') || (input.type.toUpperCase().slice(0,3) == 'INT');
+    },
+
+    // determine if ABI arg is a bool
+    isbool: function( input ) {
+      return (input.type.toUpperCase().slice(0,4) == 'BOOL');
     },
 
     // get type of input
@@ -281,8 +291,21 @@ var Web3UI = {
                         'onchange="Web3UI.Interact.savearg(' + "'$METHODNAME$','$ARGIDNAME$'" + ')" ' + 
                         'oninput="Web3UI.Interact.cleartxmsgs(' + "'$METHODNAME$'" + ')" ' +
                         "value='$VALUE$'/> ",
+        inpaddr: "<span class='control'>" +
+                   "<span class='tag sameline'>$INPUTNAME$ ($ARGTYPE$):</span> " +  
+                   '<span class="subbtn bug qr" onClick="Web3UI.Utils.Qr.scan(' + "'Web3UI_$METHODNAME$_$ARGIDNAME$'" + ');"></span>' +
+                 "</span>" +
+                 "<input type='text' id='Web3UI_$METHODNAME$_$ARGIDNAME$' " + 
+                        'onchange="Web3UI.Interact.savearg(' + "'$METHODNAME$','$ARGIDNAME$'" + ')" ' + 
+                        'oninput="Web3UI.Interact.cleartxmsgs(' + "'$METHODNAME$'" + ')" ' +
+                        "value='$VALUE$'/> ",
         inpnum:  "<span class='tag'>$INPUTNAME$ ($ARGTYPE$):</span>" + 
                  "<input type='text' id='Web3UI_$METHODNAME$_$ARGIDNAME$' class='num' " + 
+                        'onchange="Web3UI.Interact.savearg(' + "'$METHODNAME$','$ARGIDNAME$'" + ')" ' + 
+                        'oninput="Web3UI.Interact.cleartxmsgs(' + "'$METHODNAME$'" + ')" ' +
+                        "value='$VALUE$'/> ",
+        inpbool: "<span class='tag'>$INPUTNAME$ ($ARGTYPE$):</span>" + 
+                 "<input type='text' id='Web3UI_$METHODNAME$_$ARGIDNAME$' class='bool' " + 
                         'onchange="Web3UI.Interact.savearg(' + "'$METHODNAME$','$ARGIDNAME$'" + ')" ' + 
                         'oninput="Web3UI.Interact.cleartxmsgs(' + "'$METHODNAME$'" + ')" ' +
                         "value='$VALUE$'/> ",
@@ -333,8 +356,12 @@ var Web3UI = {
         }
         function atom( input, level, name, idname ) {
           var argtemplate = Web3UI.Gen.HTML.args.inp;
+          if (Web3UI.ABI.isaddr( input ))
+            argtemplate = Web3UI.Gen.HTML.args.inpaddr;
           if (Web3UI.ABI.isnum( input ))
             argtemplate = Web3UI.Gen.HTML.args.inpnum;
+          if (Web3UI.ABI.isbool( input ))
+            argtemplate = Web3UI.Gen.HTML.args.inpbool;
           var type = input.type;
           var val = Web3UI.ABI.getval( methodname, idname );
           var h = Web3UI.Utils.replace( argtemplate, [ 
@@ -398,8 +425,11 @@ var Web3UI = {
                          'oninput="Web3UI.Interact.cleartxmsgs(' + "'$METHODNAME$'" + ')"/>' +
                 "</span>",
 
-      to:       "<span class='control min'>" +
-                  "<span class='tag'>Recipient address:</span> " + 
+      to:       "<span class='control zero'>" +
+                  "<span class='control'>" +
+                    "<span class='tag sameline'>Recipient address:</span> " + 
+                    '<span class="subbtn bug qr" onClick="Web3UI.Utils.Qr.scan(' + "'Web3UI_0account_toaddress'" + ');"></span>' +
+                  "</span>" +
                   "<input type='text' value='' id='Web3UI_0account_toaddress' " +
                          'oninput="Web3UI.Interact.cleartxmsgs()"/>' +
                 "</span>",
@@ -413,9 +443,10 @@ var Web3UI = {
 
       deploy:   "<span class='subsec'>" +
                   "<span class='control'>" +
-                    "<span class='tag sameline'>Contract bytecode (from compiler):</span> " + 
-                    '<button class="open sameline" onclick="Web3UI.Utils.gete(' + 
-                                "'Web3UI_0contractbytecodefile'" + ').click()">Open from file</button>' +
+                    "<span class='tag sameline'>Contract bytecode (from compiler): </span> " + 
+                    '<span class="subbtn attn" onclick="Web3UI.Utils.selfile(' + 
+                                "'Web3UI_0contractbytecodefile'" + ')">Open from file</span>' +
+                    '<span class="subbtn bug qr" onClick="Web3UI.Utils.Qr.scan(' + "'Web3UI_0contractbytecode'" + ');"></span>' +
                     "<input type='file' class='dispnone' accept='text/*' id='Web3UI_0contractbytecodefile' " + 
                               'onchange="Web3UI.Interact.openbytecode(this.files[0],' + "'$METHODNAME$'" + ');"/>' + 
                   "</span>" +
@@ -456,7 +487,7 @@ var Web3UI = {
                       "<i id='Web3UI_$METHODNAME$'></i>" +
                     "</span>" +
                   "</span>" +
-                  "<span class='toggle long closed' id='Web3UI_$METHODNAME$_0hash_foldpane'>" +
+                  "<span class='toggle xlong closed' id='Web3UI_$METHODNAME$_0hash_foldpane'>" +
                     "<span class='subsec txinfo'>" +
                       "<i id='Web3UI_$METHODNAME$_0hash'></i>" +
                       "<i id='Web3UI_$METHODNAME$_0cost'></i>" +
@@ -465,8 +496,14 @@ var Web3UI = {
                         "<span id='Web3UI_$METHODNAME$_0rawtxsavefilenametag' class='filenametag rawtx'></span>" +
                         "<input id='Web3UI_$METHODNAME$_0rawtxsavefilename' class='filename' value='' " + 
                                'onchange="Web3UI.Interact.rawtxsavefilenamechanged(' + "'$METHODNAME$'" + ')"></input>' +
-                        "<button id='Web3UI_$METHODNAME$_0rawtxsavebtn' class='open hideifempty' " + 
-                                "onClick='Web3UI.Interact.savetx($METHODINDEX$)'></button>" +
+                        "<span class='control min vertalign'>" +
+                          "<button id='Web3UI_$METHODNAME$_0rawtxsavebtn' class='hideifempty sameline' " + 
+                                  "onClick='Web3UI.Interact.savetx($METHODINDEX$)'></button> " +
+                          "<button id='Web3UI_$METHODNAME$_0rawtxsaveqrbtn' class='hideifempty sameline' " + 
+                                  'onClick="Web3UI.Utils.Qr.gen(' + "'Web3UI_$METHODNAME$_0rawtxdata'" + ');">QR</button>' +
+                          /* '<span class="subbtn bug qr lg" onClick="Web3UI.Utils.Qr.gen(' +
+                                             "'Web3UI_$METHODNAME$_0rawtxdata'" + ');"></span>' + */
+                        "</span>" +
                         "<a href='' download='' class='dispnone' id='Web3UI_$METHODNAME$_0rawtxsave'></a>" +
                         "<i id='Web3UI_$METHODNAME$_0rawtxsavemsg'></i>" +
                       "</span>" +
@@ -567,7 +604,7 @@ var Web3UI = {
                 "<span class='subsec'>" +
                   "<span class='control'>" +
                     "<button class='open sameline' " +
-                            'onclick="Web3UI.Utils.gete(' + "'Web3UI_0account_file'" + ').click()">Open from File</button> ' +
+                            'onclick="Web3UI.Utils.selfile(' + "'Web3UI_0account_file'" + ')">Open from File</button> ' +
                     '<input type="file" class="dispnone" accept="text/*" id="Web3UI_0account_file" ' +  
                                                   'onchange="Web3UI.Wallet.openfromfile(this.files[0],$OFFLINE$);"/>' +
                     "<label for='Web3UI_0account_pktoggle' class='toggler sameline'>Enter private key</label>" +
@@ -604,7 +641,7 @@ var Web3UI = {
                       "</span>" +
                       "<span class='control med'>" +
                         "<span class='label tag'>Address</span>" +
-                        "<i class='address selectable' id='Web3UI_0account_addressshow' onclick='Web3UI.Utils.select(this)'></i>" +
+                        "<i class='address selectable' id='Web3UI_0account_addressshow' onclick='Web3UI.Utils.Qr.select(this)'></i>" +
                       "</span>" +
                     "</span>" +
                   "</span>" +
@@ -647,7 +684,7 @@ var Web3UI = {
                     "<input type='text' id='Web3UI_0account_nonce' value='' size='10' class='num' oninput='Web3UI.Wallet.clrwmsg()'/> " +
                   "</span>" +
                   "<span class='subsec min'>" +
-                    "<span class='tag footnote i'>Value entered above must match nonce retreived from network; " + 
+                    "<span class='tag footnote i'>Value entered above must match nonce retrieved from network; " + 
                     "nonce will change after each transaction is sent.</span>" +
                   "</span>" +
                   "<span class='control med'>" +
@@ -695,8 +732,10 @@ var Web3UI = {
         Web3UI.Gen.HTML.clrabi( offline );
         var id = 'Web3UI_0resetmsg';
         Web3UI.ABI.contractaddr = Web3UI.Utils.getv( 'Web3UI_0contractaddress' );
+        if (!Web3UI.ABI.contractaddr)
+          return Web3UI.Utils.showerr( id, "Contract address required" );
         if (!Web3UI.Network.testAddress( id, Web3UI.ABI.contractaddr ))
-          return Web3UI.Utils.showmsg( id, "Invalid contract address" );
+          return Web3UI.Utils.showerr( id, "Invalid contract address" );
         try {
           Web3UI.ABI.set( document.getElementById('Web3UI_0contractABI').value );
           var callHTML = Web3UI.Gen.HTML.genfromABI( Web3UI.ABI.get(), true, false, false, offline );
@@ -716,12 +755,12 @@ var Web3UI = {
         catch( e ) {
           Web3UI.Gen.HTML.clrabi( offline );
           console.log( e );
-          return Web3UI.Utils.showmsg( id, "Invalid ABI" );
+          return Web3UI.Utils.showerr( id, "Invalid ABI" );
         }
         if (!Web3UI.Interact.getcontract( id ))
           return;
         //Web3UI.Interact.clearmsgs();
-        Web3UI.Utils.showmsg( id, "dApp is ready to use below" );
+        Web3UI.Utils.showmsg( id, Web3UI.Utils.confirmed("dApp is ready to use below") );
       },
 
       // reset for new contract deployment
@@ -746,18 +785,18 @@ var Web3UI = {
                      Web3UI.Gen.HTML.genwallethead( offline ) + 
                      constr + 
                      Web3UI.Gen.HTML.sendsection.close;
-          HTML = HTML.replace( '200000', '999999' );
+          HTML = HTML.replace( '200000', '2999999' );
           document.getElementById( 'Web3UI_0UIGEN' ).innerHTML = HTML;
         }
         catch( e ) {
           Web3UI.Gen.HTML.clrabi( offline );
           console.log( e );
-          return Web3UI.Utils.showmsg( id, "Invalid ABI" );
+          return Web3UI.Utils.showerr( id, "Invalid ABI" );
         }
         if (!Web3UI.Interact.getcontract( id, true ))
           return;
         //Web3UI.Interact.clearmsgs();
-        Web3UI.Utils.showmsg( id, "Contract is ready to deploy below" );
+        Web3UI.Utils.showmsg( id, Web3UI.Utils.confirmed("Contract is ready to deploy below") );
       },
 
       clrabi: function( offline ) {
@@ -765,67 +804,124 @@ var Web3UI = {
         document.getElementById( 'Web3UI_0UIGEN' ).innerHTML = "";
       },
 
-      abisection: {
+abisection: {
         head:
           '<p>' +
           '<b>Contract</b>',
         deploy:
           '',
+
+        presets:
+          "<span class='subsec'>" +
+            "<select id='Web3UI_0abiselect' onchange='Web3UI.Gen.HTML.selectabi(this.value);'>" +
+              "$SELECTIONS$" +
+            "</select>" +
+          "</span>",
+
         transact:
           "<span class='subsec'>" +
             "<span class='control'>" +
-              "<span class='tag'>Address:</span>" +
-              '<input type="text" id="Web3UI_0contractaddress" oninput="Web3UI.Gen.HTML.abichanged();" value=""/>' +
-            '</span>' +
-          '</span>',
-        body:
+              "<span class='control'>" +
+                "<span class='tag sameline'>Address:</span> " +  
+                '<span class="subbtn bug qr" onClick="Web3UI.Utils.Qr.scan(' + "'Web3UI_0contractaddress'" + ');"></span>' +
+              "</span>" +
+              "<input type='text' id='Web3UI_0contractaddress' oninput='Web3UI.Gen.HTML.abichanged();' value=''/>" +
+            "</span>" +
+          "</span>",
+
+  abibox:
+      "<span class='subsec min'>" +
+        "<input type='checkbox' id='Web3UI_0contractabi_toggle' class='toggler'></input>" +
+        "<span class='toggle long closed'>" +
           "<span class='subsec'>" +
             "<span class='control'>" +
-              "<span class='tag'>ABI:</span>" +
-              '<textarea id="Web3UI_0contractABI" value="" size="30" oninput="Web3UI.Gen.HTML.abichanged();">' +
-              '</textarea>' +
-            '</span>' +
-          '</span>' +
-          '<span class="subsec">' +
-            '<span class="control">' +
-              '<span class="tag">Open from </span>' +
-              '<button class="open sameline" onclick="Web3UI.Utils.gete(' + "'Web3UI_0file'" + ').click()">File</button> ' +
-              '<button class="open sameline" onClick="Web3UI.Gen.HTML.abireset($ISDEPLOY$,$OFFLINE$);">Input</button>' +
+              "<span class='tag sameline'>ABI: </span> " + 
+              '<span class="subbtn attn" onclick="Web3UI.Utils.selfile(' + "'Web3UI_0file'" + ')">Open from file</span> ' +
+              '<span class="subbtn bug qr" onClick="Web3UI.Utils.Qr.scan(' + "'Web3UI_0contractABI'" + ');"></span>' +
               '<input type="file" class="dispnone" accept="text/*" id="Web3UI_0file" ' +
-                                           'onchange="Web3UI.Gen.HTML.openabi(this.files[0],$ISDEPLOY$,$OFFLINE$);"/>' +
-            '</span>' +
-            "<span class='toggle closed' id='Web3UI_0resetmsg_foldpane'>" +
-              "<span class='subsec statusinfo'>" +
-                "<i id='Web3UI_0resetmsg'></i>" +
-              "</span>" +
+                     'onchange="Web3UI.Gen.HTML.openabi(this.files[0],$ISDEPLOY$,$OFFLINE$);"/>' +
             "</span>" +
+            "<span class='control'>" +
+              '<textarea id="Web3UI_0contractABI" value="" size="30" oninput="Web3UI.Gen.HTML.abichanged();"></textarea>' +
+            "</span>" +
+          "</span>" +
+        "</span>" +
+      "</span>",
+
+  genbtn:
+      '<span class="subsec">' +
+        '<span class="control">' +
+          '<button class="sameline" onclick="Web3UI.Gen.HTML.abireset($ISDEPLOY$,$OFFLINE$);">Generate UI</button> ' +
+          "<label for='Web3UI_0contractabi_toggle' class='$HIDEIFDEPLOY$toggler sameline'>View/edit ABI</label>" +
+        '</span>' +
+        "<span class='toggle closed' id='Web3UI_0resetmsg_foldpane'>" +
+          "<span class='subsec statusinfo'>" +
+            "<i id='Web3UI_0resetmsg'></i>" +
           '</span>' +
+        '</span>' +
+      '</span>',
+
+  end:
           '</p>'
       },
 
-      insertabisection: function( isdeploy, defaultabi, defaultcontractaddress, offline ) {
+      insertabisection: function( isdeploy, offline, presets ) {
         var html = Web3UI.Gen.HTML.abisection.head;
+        var dflt = "";
+        if (!isdeploy && presets) {
+          var selHTML = "";
+          if (presets) {
+            for( var name in presets ) {
+              selHTML += "<option value='" + name + "'>" + name + "</option>";
+              if (!dflt)
+                dflt = name;
+            }
+          }
+          html += Web3UI.Utils.replace( Web3UI.Gen.HTML.abisection.presets, [{token:'$SELECTIONS$', replacewith:selHTML}] );
+        }
         html += isdeploy ? Web3UI.Gen.HTML.abisection.deploy : Web3UI.Gen.HTML.abisection.transact;
+        html += Web3UI.Gen.HTML.abisection.abibox;
+        html += Web3UI.Gen.HTML.abisection.genbtn;
         var tokens = [
-          {token:'$ISDEPLOY$', replacewith:isdeploy?'true':'false', count:2},
-          {token:'$OFFLINE$', replacewith:offline?'true':'false', count:2}
+          {token:'$HIDEIFDEPLOY$', replacewith:isdeploy?'hidden ':''},
+          {token:'$MINIFDEPLOY$', replacewith:isdeploy?' min':''},
+          {token:'$ISDEPLOY$', replacewith:isdeploy?'true':'false'},
+          {token:'$OFFLINE$', replacewith:offline?'true':'false'}
         ];
-        html += Web3UI.Utils.replace( Web3UI.Gen.HTML.abisection.body, tokens );
-        document.getElementById( 'Web3UI_0ABISECTION' ).innerHTML = html;
-        try {
-          defaultabi = defaultabi ? JSON.stringify( defaultabi ) : "";
+        html = Web3UI.Utils.replace( html, tokens );
+        document.getElementById( 'Web3UI_0ABISECTION' ).innerHTML = html + Web3UI.Gen.HTML.abisection.end;
+        setTimeout( "Web3UI.Gen.HTML.selectabi('" + dflt + "')", 1 );
+      },
+
+      presets: {contracts: {}, abis: {}},
+      insertabi: function( isdeploy, offline, presetcontracts, presetabis ) {
+        if (presetcontracts)
+          Web3UI.Gen.HTML.presets.contracts = presetcontracts;
+        if (presetabis)
+          Web3UI.Gen.HTML.presets.abis = presetabis;
+        Web3UI.Gen.HTML.insertabisection( isdeploy, offline, presetcontracts );
+      },
+
+      selectabi: function( name ) {
+        var presets = Web3UI.Gen.HTML.presets.contracts;
+        var abis = Web3UI.Gen.HTML.presets.abis;
+        var addr = "", abi = null;
+        if (name && presets && abis) {
+          addr = presets[name].address ? presets[name].address : "";
+          abi = presets[name].abi ? presets[name].abi : "";
+          Web3UI.Gen.HTML.setabidefault( abi ? abis[abi].abi : null, addr );
+          Web3UI.Gen.HTML.abichanged();
         }
-        catch( e ) {
-          defaultabi = "";
-        }
-        setTimeout( "Web3UI.Gen.HTML.setabidefault('" + defaultabi + "','" + defaultcontractaddress + "')", 1 );
+        if (!abi)
+          Web3UI.Utils.el( 'Web3UI_0contractabi_toggle' ).checked = true;
       },
 
       setabidefault: function( defaultabistr, defaultcontractaddress ) {
         Web3UI.Utils.setv( 'Web3UI_0contractaddress', defaultcontractaddress );
         try {
-          var defaultabi = defaultabistr ? JSON.parse( defaultabistr ) : "";
-          defaultabistr = defaultabi ? JSON.stringify( defaultabi, null, 3 ) : "";
+          if (defaultabistr && typeof defaultabistr == 'string')
+            defaultabistr = defaultabistr ? JSON.parse( defaultabistr ) : "";
+          defaultabistr = defaultabistr ? JSON.stringify( defaultabistr, null, 3 ) : "";
         }
         catch( e ) {
           defaultabistr = "";
@@ -855,7 +951,7 @@ var Web3UI = {
         function cb( abi ) {
           Web3UI.Gen.HTML.abichanged( offline );
           Web3UI.Utils.showeditmsg( 'Web3UI_0contractABI', JSON.stringify(abi,null,2) );
-          Web3UI.Gen.HTML.abireset( isdeploy, offline );
+          //Web3UI.Gen.HTML.abireset( isdeploy, offline );
         }
         Web3UI.Utils.openjsonfile( id, file, cb, err );
       }
@@ -865,7 +961,7 @@ var Web3UI = {
     /*** Generate call/deploy/sign invocations from ABI ***/
     Invoke: {
 
-      argcollect: "Web3UI.Interact.getarg($METHODINDEX$,'$ARGNAME$','$ARGIDNAME$')",
+      argcollect: "Web3UI.Interact.getarg($METHODINDEX$,'$ARGNAME$','$ARGIDNAME$','$ARGTYPE$')",
 
       // gen list of arg collectors for call/sign invocation
       genargs: function( ABI, i, inputs ) {
@@ -885,9 +981,10 @@ var Web3UI = {
         function atom( input, level, name, idname ) {
           var a = (level && input.name) ? (input.name+':') : '';
           a += Web3UI.Utils.replace( Web3UI.Gen.Invoke.argcollect, [ 
-                      {token:'$METHODINDEX$', replacewith:i, count:1 },
-                      {token:'$ARGNAME$', replacewith:name, count:1 },
-                      {token:'$ARGIDNAME$', replacewith:idname, count:1 } ] );
+                      {token:'$METHODINDEX$', replacewith:i},
+                      {token:'$ARGNAME$', replacewith:name},
+                      {token:'$ARGIDNAME$', replacewith:idname},
+                      {token:'$ARGTYPE$', replacewith:input.type} ] );
           return a;
         }
         var methodname = Web3UI.ABI.getname( ABI, i );
@@ -981,12 +1078,23 @@ var Web3UI = {
       },
 
       // collect arg from input field
-      getarg: function( methodindex, argname, argidname ) {
+      getarg: function( methodindex, argname, argidname, argtype ) {
         var ABI = Web3UI.ABI.get();
         var methodname = Web3UI.ABI.getname( ABI, methodindex );
         var a = document.getElementById( Web3UI.Interact.getargid(methodname,argidname) ).value;
         if (a == "")
           throw( (argname?argname:"input") + " required" );
+
+        if (argtype == 'bool') {
+          if (a == 'true') 
+            a = true;
+          else
+            if (a == 'false')
+              a = false;
+            else
+              throw( (argname?argname:"input") + " must be either 'true' or 'false'" );
+        }
+
         if (!Web3UI.Interact.params[methodname])
           Web3UI.Interact.params[methodname] = {};
         var p = Web3UI.Interact.params[methodname];
@@ -1033,7 +1141,31 @@ var Web3UI = {
         if (!contract)
           return;
         function oncompletion( err, res ) {
-          Web3UI.Utils.showmsg( id, err?Web3UI.Utils.err(err):JSON.stringify(res) );
+          // test cases
+          //err = 0, res = false;
+          //err = 0, res = 100;
+          //err = 0, res = "valid result";
+          //err = 0, res = {"result": "100"};
+          //err = 0, res = ["result", "100", {arg: 333}]; 
+          //err = "Error: Returned error: execution reverted: divide by 0";
+          //err = "Error: Returned error: execution reverted";
+          //err = "Error: Returned error: universe farted";
+          //err = "Error: Returned values aren't valid, did it run Out of Gas? You might also see this error"
+          //err = "Error: Returned error";
+          if (err) {
+            err = err.toString();
+            var reason = "Unavailable";
+            var m = "Error: Returned error: execution reverted";
+            if (err.slice(0,m.length) == m)
+              err = err.slice( m.length );
+            m = "Error: Returned error";
+            if (err.slice(0,m.length) == m)
+              err = err.slice( m.length );
+            if (err.slice(0,2) == ": ")
+              err = "Failed, response was: " + err.slice(2);
+            err = err ? err : reason;
+          }
+          Web3UI.Utils.showmsg( id, err ? Web3UI.Utils.err(err) : Web3UI.Utils.confirmed(JSON.stringify(res)) );
         }
         try {
           var c = f( contract );
@@ -1137,7 +1269,7 @@ var Web3UI = {
       _sendrawtx: {pending: {}},
       sendrawtx: function( methodname, rawtx ) {
         if (!rawtx)
-          return Web3UI.Utils.showmsg( id, "Sign transaction first" );
+          return Web3UI.Utils.showerr( id, "Sign transaction first" );
         if (!confirm( "Send transaction? (action is final)" ))
           return;
         var ids = Web3UI.Interact.gettxids( methodname );
@@ -1146,16 +1278,16 @@ var Web3UI = {
         Web3UI.Interact._sendrawtx.pending[methodname] = rawtx;
         Web3UI.Utils.en( ids.signbtn, false );
         function showmsg( msg ) {
-          if (Web3UI.Interact._sendrawtx.pending[methodname] == rawtx)
+          if (Web3UI.Interact._sendrawtx.pending[methodname] == rawtx) {
             Web3UI.Utils.showmsg( id, msg );
+            Web3UI.Utils.en( ids.signbtn, true );
+          }
           console.log( msg );
         }
         function onwait( msg ) {
           showmsg( msg );
         }
         function onerror( errmsg ) {
-          if (Web3UI.Interact._sendrawtx.pending[methodname] == rawtx)
-            Web3UI.Utils.en( ids.signbtn, true );
           showmsg( errmsg );
           Web3UI.Wallet.getWalletInfo();
         }
@@ -1187,18 +1319,28 @@ var Web3UI = {
       // save raw tx
       saverawtx: function( methodname, rawtx, name ) {
         if (!Web3UI.Wallet.account)
-          return Web3UI.Utils.showmsg( ids.rawtxsavemsg, "Wallet required" );
+          return Web3UI.Utils.showerr( ids.rawtxsavemsg, "Wallet required" );
         var ids = Web3UI.Interact.gettxids( methodname );
         if (!rawtx)
-          return Web3UI.Utils.showmsg( ids.rawtxsavemsg, "Sign transaction first" );
+          return Web3UI.Utils.showerr( ids.rawtxsavemsg, "Sign transaction first" );
+
+        var fn = Web3UI.Utils.getv( ids.rawtxsavefn );
+        if (!fn)
+          fn = Web3UI.Interact.getrawtxsavefilename( methodname, name );
+        var contents = Web3UI.Interact.getrawtxsavefilecontents( methodname, rawtx, name );
+        Web3UI.Utils.savejsonfile( ids.rawtxsave, fn, contents );
+
+        /*
         var e = document.getElementById( ids.rawtxsave );
         e.download = Web3UI.Utils.getv( ids.rawtxsavefn );
         if (!e.download)
           e.download = Web3UI.Interact.getrawtxsavefilename( methodname, name );
         var contents = Web3UI.Interact.getrawtxsavefilecontents( methodname, rawtx, name );
         console.log( contents );
-        e.href = "data:text/plain," + JSON.stringify( contents );
+        e.href = Web3UI.Utils.todataurl( 'text/plain', JSON.stringify(contents) );
+        //"data:text/plain," + JSON.stringify( contents );
         e.click();
+        */
       },
 
       // save signed tx
@@ -1260,10 +1402,19 @@ var Web3UI = {
       // get tx hash
       gettxhash: function( methodname ) {
         var ids = Web3UI.Interact.gettxids( methodname );
-        var idhash = ids.hash;
-        var hash = Web3UI.Utils.getmsg( idhash, "" );
-        if (hash.slice(0,16) == "Transaction ID: ")
-          hash = hash.slice( 16 );
+        var hash = Web3UI.Utils.getmsg( ids.hashcontent, "" );
+
+        /*
+        var label = "Transaction ID: ";
+        if (hash.slice(0,label.length) == label)
+          hash = hash.slice( label.length );
+        label = "<span class='label'>Transaction ID: </span>";
+        hash = Web3UI.Utils.replacetoks( hash, '"', "'" );
+        if (hash.slice(0,label.length) == label)
+          hash = hash.slice( label.length );
+        */
+
+        console.log( hash );
         return hash;
       },
 
@@ -1272,7 +1423,7 @@ var Web3UI = {
         var ids = Web3UI.Interact.gettxids( methodname );
         var name = ids.name;
         var hash = Web3UI.Interact.gettxhash( methodname );
-        return Web3UI.appname + "-rawtx-" + name + "-" + hash + ".txt";
+        return Web3UI.appname + "-rawtx-" + name + "-" + hash.slice(0,8) + "--" + hash.slice(hash.length-4) + ".txt";
       },
 
       // on file name edit
@@ -1289,11 +1440,18 @@ var Web3UI = {
         var ids = Web3UI.Interact.gettxids( methodname );
         err = err ? err : "";
         Web3UI.Utils.showmsg( ids.id, (err||!res) ? Web3UI.Utils.err(err) : "" );
-        Web3UI.Utils.showmsg( ids.hash, (err||!res) ? "" : "Transaction ID: "+res.transactionHash );
-        Web3UI.Utils.showmsg( ids.cost, (err||!txcost) ? "" : "Maximum to spend: " + txcost + " ether" );
+        Web3UI.Utils.showmsg( ids.hash, (err||!res) ? "" : 
+                      "<span class='label'>Transaction ID: </span>" + 
+                      "<span class='selectable' id='" + ids.hashcontent + "'" + 
+                           " onclick='Web3UI.Utils.select(this)'>" + res.transactionHash + "</span>" );
+        Web3UI.Utils.showmsg( ids.cost, (err||!txcost) ? "" : "<span class='label'>Maximum to spend: </span>" + txcost + " ether" );
         Web3UI.Utils.showmsg( ids.send, "" );
         Web3UI.Utils.setin( ids.sendbtn, (err||!res) ? "" : "Send" );
-        Web3UI.Utils.showmsg( ids.rawtx, (err||!res) ? "" : "Raw transaction: "+res.rawTransaction );
+        Web3UI.Utils.showmsg( ids.rawtx, (err||!res) ? "" : 
+                                         "<span class='label'>Raw transaction: </span>" + 
+                                         "<span id='" + ids.rawtxdata + "' " +
+                                               "class='selectable hexscroll' onclick='Web3UI.Utils.Qr.select(this)'>" + 
+                                               res.rawTransaction + "</span>" );
         Web3UI.Utils.showmsg( ids.rawtxsavefntag, (err||!res) ? "" : "File name: " );
         Web3UI.Utils.showeditmsg( ids.rawtxsavefn, (err||!res) ? "" : Web3UI.Interact.getrawtxsavefilename(methodname,name) );
         Web3UI.Utils.setin( ids.rawtxsavebtn, (err||!res) ? "" : "Save" );
@@ -1333,6 +1491,7 @@ var Web3UI = {
           'id': id,
           foldpane: id+'_0hash_foldpane',
           hash: id+'_0hash',
+          hashcontent: id+'_0hashcontent',
           pay: id+'_0pay',
           cost: id+'_0cost',
           fee: id+'_0fee',
@@ -1342,6 +1501,7 @@ var Web3UI = {
           send: id+'_0send',
           broadcastconsole: 'Web3UI_0broadcastconsole',
           rawtx: id+'_0rawtx',
+          rawtxdata: id+'_0rawtxdata',
           rawtxsave: id+'_0rawtxsave',
           rawtxsavemsg: id+'_0rawtxsavemsg',
           rawtxsavebtn: id+'_0rawtxsavebtn',
@@ -1394,7 +1554,7 @@ var Web3UI = {
         Web3UI.Utils.showmsg( idres, "waiting for reply..." );
         if (!noaddress)
           if (!Web3UI.ABI.contractaddr)
-            return Web3UI.Utils.showmsg( idres, "Contract Address required" );
+            return Web3UI.Utils.showerr( idres, "Contract Address required" );
         try {
           var ABI = JSON.parse( document.getElementById(Web3UI.Interact.gettxids().contractABI).value );
           if (noaddress)
@@ -1402,7 +1562,7 @@ var Web3UI = {
           return new Web3UI.Network.web3.eth.Contract( ABI, Web3UI.ABI.contractaddr );
         }
         catch( e ) {
-          Web3UI.Utils.showmsg( idres, e );//"Contract ABI or Address is invalid" );
+          Web3UI.Utils.showerr( idres, e );//"Contract ABI or Address is invalid" );
         }
       }
 
@@ -1431,22 +1591,21 @@ var Web3UI = {
       var id = idpfx+'_response';
       var idval = idpfx+'_gasprice';
       function oncompletion( err, wei ) {
-        //  29000000000
-        // 134307621597
-        // 252832362472
-        var msg = "";
-        if (err)
-          msg = Web3UI.Utils.err( err, "Attempt to update gas price failed" );
-          //Web3UI.Utils.showeditmsg( idval, "" );
+        var msg = "", showmsg = "";
+        if (err) {
+          msg = "Attempt to update gas price failed";
+          showmsg = Web3UI.Utils.err( err, msg );
+        }
         else {
           Web3UI.Network.gasprice = wei;
           Web3UI.Utils.showeditmsg( idval, Web3UI.Network.gasprice );
-          msg = "Gas price "+Web3UI.Network.web3.utils.fromWei(wei.toString(),'ether')+" ether";
+          msg = "Gas price " + Web3UI.Network.web3.utils.fromWei(wei.toString(),'ether') + " ether";
+          showmsg = Web3UI.Utils.confirmed( msg );
         }
         if (callback)
           callback( err, msg );
         else
-          Web3UI.Utils.showmsg( id, msg );
+          Web3UI.Utils.showmsg( id, showmsg );
       }
       Web3UI.Utils.showmsg( id, "Requesting gas price..." );
       Web3UI.Network.web3.eth.getGasPrice( oncompletion );
@@ -1455,11 +1614,11 @@ var Web3UI = {
     // test address validity
     testAddress: function( idmsg, address ) {
       if (!address)
-        return Web3UI.Utils.showmsg( idmsg, "Address required" );
+        return Web3UI.Utils.showerr( idmsg, "Address required" );
       if (Web3UI.Network.web3.utils.isAddress( address ))
         return true;
       else
-        Web3UI.Utils.showmsg( idmsg, "Invalid ethereum address" );
+        Web3UI.Utils.showerr( idmsg, "Invalid ethereum address" );
     },
 
     // get balance of address
@@ -1467,17 +1626,20 @@ var Web3UI = {
       var id = idpfx+'_response';
       var idval = idpfx+'_balance';
       function oncompletion( err, wei ) {
-        var msg = "";
-        if (err)
-          msg = Web3UI.Utils.err( err, "Attempt to update balance failed" );
-          //Web3UI.Utils.showeditmsg( idval, "" );
-        else
-          msg = "Balance "+Web3UI.Network.web3.utils.fromWei(wei,'ether')+" ether",
+        var msg = "", showmsg = "";
+        if (err) {
+          msg = "Attempt to update balance failed";
+          showmsg = Web3UI.Utils.err( err, msg );
+        }
+        else {
+          msg = "Balance " + Web3UI.Network.web3.utils.fromWei(wei,'ether') + " ether";
+          showmsg = Web3UI.Utils.confirmed( msg );
           Web3UI.Utils.showeditmsg( idval, Web3UI.Network.web3.utils.fromWei(wei,'ether') );
+        }
         if (callback)
           callback( err, msg );
         else
-          Web3UI.Utils.showmsg( id, msg );
+          Web3UI.Utils.showmsg( id, showmsg );
       }
       try {
         Web3UI.Utils.showmsg( id, "Requesting balance..." );
@@ -1494,18 +1656,21 @@ var Web3UI = {
       var idval = idpfx+'_nonce';
       Web3UI.Wallet.nonce = -1;
       function oncompletion( err, count ) {
-        var msg = "";
+        var msg = "", showmsg;
         Web3UI.Wallet.nonce = err?-1:count;
-        if (err)
-          msg = Web3UI.Utils.err( err, "Attempt to update nonce failed" );
-          //Web3UI.Utils.showeditmsg( idval, "" );
-        else
-          msg = "Nonce " + count,
+        if (err) {
+          msg = "Attempt to update nonce failed";
+          showmsg = Web3UI.Utils.err( err, msg );
+        }
+        else {
+          msg = "Nonce " + count;
+          showmsg = Web3UI.Utils.confirmed( msg );
           Web3UI.Utils.showeditmsg( idval, Web3UI.Wallet.nonce );
+        }
         if (callback)
           callback( err, msg );
         else
-          Web3UI.Utils.showmsg( id, msg );
+          Web3UI.Utils.showmsg( id, showmsg );
       }
       try {
         Web3UI.Utils.showmsg( id, "Requesting nonce..." );
@@ -1534,14 +1699,15 @@ var Web3UI = {
         return;
       function callback( err, res ) {
         if (err) {
-          err = Web3UI.Utils.err( err );
+          err = err.toString();
           if (err == Web3UI.Network.preverr)
             Web3UI.Network.msgchain = "";
           Web3UI.Network.preverr = err;
-          res = Web3UI.Utils.err( err, "Attempt to update Balance, Nonce, and Gas Price failed" );
+          res = "Attempt to update Balance, Nonce, and Gas Price failed";
         }
         Web3UI.Network.msgchain = Web3UI.Network.msgchain ? (Web3UI.Network.msgchain + ", " + res) : res;
-        Web3UI.Utils.showmsg( idpfx+'_response', Web3UI.Network.msgchain );
+        Web3UI.Utils.showmsg( idpfx+'_response',
+                   err ? Web3UI.Utils.err(err,Web3UI.Network.msgchain) : Web3UI.Utils.confirmed(Web3UI.Network.msgchain) );
       }
       if (!action || action == 'nonce')
         Web3UI.Network.getAddressNonce( idpfx, address, action?null:callback );
@@ -1638,38 +1804,42 @@ var Web3UI = {
         }
         Web3UI.Network._broadcasttx.posted[rawtx] = {'msg': msg};
       }
-      function calccost( gasused ) {
+      function calccost( gasused, value ) {
+        value = value == undefined ? stats.value : value;
         var msg = "";
         if (!gasused)
           return msg;
-        var value = Web3UI.Network.web3.utils.toWei( stats.value?stats.value:'0.0', 'ether' );
+        var value = Web3UI.Network.web3.utils.toWei( value?value:'0.0', 'ether' );
         var c = Web3UI.Network.calccost( value, gasused, stats.gasprice );
         if (!c || c == "0")
-          msg += gasused ? "<br/>Gas used: "+gasused : "";
+          msg += gasused ? "<br/><span class='label'>Gas used: </span>"+gasused : "";
         else {
-          msg += "<br/>Ether spent: " + c;
-          msg += gasused ? " (gas used: "+gasused+")" : "";
+          msg += "<br/><span class='label'>Ether spent: </span>" + 
+                 "<span class='selectable' onclick='Web3UI.Utils.select(this)'>" + c + "</span>";
+          msg += gasused ? "<span class='label'> (gas used: </span>"+gasused+"<span class='label'>)</span>" : "";
         }
         return msg;
       }
       function onerror( errmsg ) {
         if (!done)
           if (delaysatisfied) {
+
+//errmsg = 'Error: Error: reverted by EVM: "XgasUsed": 222 *"gasUsed":,ta;" "21501 666, dgsd: "gasUsedY":333 fg45s, dfg  46 m';  //4test
+
             errmsg = errmsg.toString();
             err = true;
             Web3UI.Network._broadcasttx.counts.pending--;
             Web3UI.Network._broadcasttx.counts.failed++;
-
-//errmsg = 'Error: Error: reverted by EVM: *"gasUsed":,ta;" "21501 666, dgsd: fg456sdgs, dfgsd  456 fg'; // 4debug
-
             var gasused = Web3UI.Utils.extract( errmsg, '"gasUsed"' );
             if (errmsg.indexOf( 'revert' ) >= 0)
-              errmsg = "Reverted by EVM, invalid parameter or not enough gas";
+              errmsg = "Invalid parameter or not enough gas";
             errmsg = Web3UI.Utils.err( errmsg, "Failed" );
-            errmsg += calccost( gasused );
+            errmsg = "<span class='txerr'>" + errmsg;
+            errmsg += calccost( gasused, "0.0" );
             if (stats.gaslimit && gasused > (stats.gaslimit-500))
               errmsg += "<br/>May require gas limit increase";
-            if (!savetxmsg( "<span class='failed'>" + errmsg + "</span>", callbacks.onerror ))
+            errmsg += "</span>";
+            if (!savetxmsg( errmsg, callbacks.onerror ))
               msgnum = Web3UI.Network.addconsolemsg( stats.idmsg, errmsg, stats, msgnum, 'failed', Web3UI.Network._broadcasttx.counts );
             delete Web3UI.Network._broadcasttx.posted[rawtx];
             Web3UI.Network.chgconsoletitle( stats.idmsg, Web3UI.Network._broadcasttx.counts );
@@ -1693,11 +1863,13 @@ var Web3UI = {
         if (done) return;
         Web3UI.Network._broadcasttx.counts.pending--;
         done = true;
-        var msg = "Confirmed, included in block " + receipt.blockNumber;
+        var msg = "<span class='txreceipt'>";
+        msg += "<span class='confirmed'>Confirmed, included in block " + receipt.blockNumber + "</span>";
         if (receipt.contractAddress)
-          msg += "<br/>Contract deployed at address: <span class='tt selectable' onclick='Web3UI.Utils.select(this)'>" + 
-                                                     receipt.contractAddress + "</span>";
+          msg += "<br/><span class='label'>Contract deployed at address: </span>" + 
+                      "<span class='url selectable' onclick='Web3UI.Utils.Qr.select(this)'>" + receipt.contractAddress + "</span>";
         msg += calccost( receipt.gasUsed );
+        msg += "</span>";
         if (!savetxmsg( msg, callbacks.oncompletion, receipt ))
           msgnum = Web3UI.Network.addconsolemsg( stats.idmsg, msg, stats, msgnum, 'confirmed', Web3UI.Network._broadcasttx.counts );
         Web3UI.Network.chgconsoletitle( stats.idmsg, Web3UI.Network._broadcasttx.counts );
@@ -1734,11 +1906,11 @@ var Web3UI = {
         return onerror( e );
       }
 
-      setTimeout( send, Web3UI.debug ? 31000 : 100 );
+      setTimeout( send, Web3UI.debug ? 11000 : 100 );
       setTimeout( wait, 1000 );
 
-      //setTimeout( onhash, 15000 );
-      //setTimeout( onconfirm, 30000 );
+      //setTimeout( onhash, 5000 );
+      //setTimeout( onconfirm, 10000 );
 
       return true;
     }
@@ -1754,7 +1926,8 @@ var Web3UI = {
       // create default wallet file name
       createdefaultfilename: function( account ) {
         account = account ? account : Web3UI.Wallet.account;
-        return Web3UI.appname + "-wallet-" + (account.address?account.address:'--') + ".txt";
+        var a = account.address ? account.address : '----';
+        return Web3UI.appname + "-wallet-" + a.slice(0,10) + "--" + a.slice(a.length-4) + ".txt";
       },
 
       // init save file ui
@@ -1786,7 +1959,7 @@ var Web3UI = {
           a = Web3UI.Network.web3.eth.accounts.privateKeyToAccount( pk );
         }
         catch( e ) {
-          return Web3UI.Utils.showmsg( 'Web3UI_0account_openresponse', e );
+          return Web3UI.Utils.showerr( 'Web3UI_0account_openresponse', e );
         }
         Web3UI.Wallet.account = a;
         Web3UI.Wallet.init( offline, cansave );
@@ -1806,11 +1979,11 @@ var Web3UI = {
         function err( m ) {
           Web3UI.Wallet.clr();
           Web3UI.Utils.showeditmsg( 'Web3UI_0account_privatekey', "" );
-          Web3UI.Utils.showmsg( 'Web3UI_0account_openresponse', m );
+          Web3UI.Utils.showerr( 'Web3UI_0account_openresponse', m );
         }
         function cb( w ) {
           if (w.privateKeyEncrypted) {
-            var pass = Web3UI.Utils.getv( 'Web3UI_0account_pass' );
+            var pass = ""; //Web3UI.Utils.getv( 'Web3UI_0account_pass' );
             if (pass == "password")
               pass = "";
             if (!pass) {
@@ -1838,9 +2011,9 @@ var Web3UI = {
           if (w.address != Web3UI.Wallet.account.address)
             return err( "Decryption failed, check password" );
           Web3UI.Utils.showeditmsg( 'Web3UI_0account_savefilename', file.name );
-          if (offline)
-            Web3UI.Utils.showeditmsg( 'Web3UI_0account_nonce', "" );
-          else
+          Web3UI.Utils.showeditmsg( 'Web3UI_0account_pass', "" );
+          Web3UI.Utils.showeditmsg( 'Web3UI_0account_nonce', "" );
+          if (!offline)
             Web3UI.Wallet.getWalletInfo();
         }
         Web3UI.Utils.openjsonfile( 'Web3UI_0account_openresponse', file, cb, err );
@@ -1851,7 +2024,7 @@ var Web3UI = {
         account = account ? account : Web3UI.Wallet.account;
         var id = 'Web3UI_0account_openresponse';
         if (!account)
-          return Web3UI.Utils.showmsg( id, "Create wallet first" );
+          return Web3UI.Utils.showerr( id, "Create wallet first" );
         try {
           var w = {privateKey: account.privateKey, address: account.address};
           var pass = Web3UI.Utils.getv( 'Web3UI_0account_pass' );
@@ -1864,6 +2037,8 @@ var Web3UI = {
             else
               throw( "Encryption failed, wallet not saved" );
           }
+
+          /*
           var e = document.getElementById( 'Web3UI_0account_save' );
           e.href = "data:text/plain," + JSON.stringify( w );
           var fn = Web3UI.Utils.getv( 'Web3UI_0account_savefilename' );
@@ -1871,9 +2046,15 @@ var Web3UI = {
             fn = Web3UI.Wallet.createdefaultfilename( account );
           e.download = fn;
           e.click();
+          */
+
+          var fn = Web3UI.Utils.getv( 'Web3UI_0account_savefilename' );
+          if (!fn)
+            fn = Web3UI.Wallet.createdefaultfilename( account );
+          Web3UI.Utils.savejsonfile( 'Web3UI_0account_save', fn, w );
         }
         catch( e ) {
-          Web3UI.Utils.showmsg( id, e );
+          Web3UI.Utils.showerr( id, e );
         }
       },
 
@@ -1882,7 +2063,7 @@ var Web3UI = {
         account = account ? account : Web3UI.Wallet.account;
         var id = 'Web3UI_0account_openresponse';
         if (!account)
-          return Web3UI.Utils.showmsg( id, "Create wallet first" );
+          return Web3UI.Utils.showerr( id, "Create wallet first" );
         var fn = Web3UI.Utils.getv( 'Web3UI_0account_savefilename' );
         if (!fn)
           Web3UI.Utils.showeditmsg( 'Web3UI_0account_savefilename', Web3UI.Wallet.createdefaultfilename(account) );
@@ -1894,7 +2075,7 @@ var Web3UI = {
           idmsg = 'Web3UI_0account_response';
         Web3UI.Utils.showmsg( idmsg, "waiting for reply..." );
         if (!Web3UI.Wallet.account)
-          return Web3UI.Utils.showmsg( idmsg, "Open wallet first" );
+          return Web3UI.Utils.showerr( idmsg, "Open wallet first" );
         return Web3UI.Wallet.account;
       },
 
@@ -1943,7 +2124,7 @@ var Web3UI = {
           txdef.value = Web3UI.Network.web3.utils.toWei( txdef.value, 'ether' );
         }
         catch( e ) {
-          return Web3UI.Utils.showmsg( id, e );
+          return Web3UI.Utils.showerr( id, e );
         }
         return Web3UI.Interact.signtxdef( '0account', txdef, Web3UI.Wallet.rawtx, 0, 'payment' );
       },
@@ -1995,21 +2176,38 @@ var Web3UI = {
 
       // process error
       err: function( msg, pfx ) {
-        if (msg && msg.toString().slice(0,35) == "Error: Signer Error: Signer Error: ")
-          msg = msg.toString().slice(35);
+        if (!msg)
+          return msg;
+        msg = msg.toString();
+        var newmsg = false;
+        if (msg.slice(0,35) == "Error: Signer Error: Signer Error: ")
+          msg = msg.slice( 35 );
+        if (msg.slice(0,23) == "Error: Returned Error: ")
+          msg = msg.slice( 23 );
+        if (msg.indexOf( "Returned values aren't valid, did it run Out of Gas?" ) >= 0)
+          msg = "There may be no contract at specified address on current network", newmsg = true;
+                //, or function not supported (possible ABI/contract type mismatch)";
         if (msg == 'Error: Invalid JSON RPC response: ""')
-          msg = "No internet or network unresponsive";
-        if (msg && msg.toString().slice(0,29) == "Error: invalid arrayify value")
+          msg = "No internet or network unresponsive", newmsg = true;
+        if (msg.slice(0,29) == "Error: invalid arrayify value")
           msg = "Data (bytes, etc.) arguments are hexidecimal strings preceeded by '0x';" + 
-                " function arguments also require special handling (" + msg + ")";
-        return pfx ? (pfx+" (" + msg + ")") : msg;
+                " function arguments also require special handling (response was: " + msg + ")", newmsg = true;
+        //msg = newmsg ? msg : "response was: " + msg;
+        msg = pfx ? (pfx+" (" + msg + ")") : msg;
+        return "<span class='failed'>" + msg + "</span>";
       },
 
       // show a msg on page
       showerr: function( id, msg, pfx ) {
-        msg = Web3UI.Utils.err( msg, pfx );
         if (msg) console.log( msg );
+        msg = Web3UI.Utils.err( msg, pfx );
         Web3UI.Utils.showmsg( id, msg );
+      },
+
+      confirmed: function( msg, pfx ) {
+        msg = msg == undefined ? '""' : msg.toString();
+        msg = pfx ? (pfx+" (" + msg + ")") : msg;
+        return "<span class='confirmed'>" + msg + "</span>";
       },
 
       // toggle targeted foldpane on page
@@ -2117,6 +2315,22 @@ var Web3UI = {
           window.getSelection().selectAllChildren( e );
       },
 
+      firemouseev: function( id, evn ) {
+        var e = Web3UI.Utils.el( id );
+        if (e) {
+          var ev = new MouseEvent( evn, {view: window, bubbles: true, cancelable: true} );
+          e.dispatchEvent( ev );
+        }
+      },
+
+      input: function( id, v ) {
+        var e = Web3UI.Utils.el( id );
+        if (e) {
+          e.value = v;
+          Web3UI.Utils.firemouseev( e, 'input' );
+        }
+      },
+
       getparent: function( id ) {
         var e = Web3UI.Utils.el( id );
         return (e && e.parentElement) ? e.parentElement : null;
@@ -2218,6 +2432,39 @@ var Web3UI = {
         return str.replace(new RegExp(find, 'g'), replace);
       },*/
 
+      // make data url
+      __lastobjurl: null,
+      todataurl: function( mimetype, content ) {
+        if (Web3UI.Utils.__lastobjurl)
+          URL.revokeObjectURL( Web3UI.Utils.__lastobjurl );
+        var b = new Blob( [content], {type:mimetype} );
+        Web3UI.Utils.__lastobjurl = URL.createObjectURL( b );
+        return Web3UI.Utils.__lastobjurl;
+      },
+
+      savedataurl: function( id, fn, mimetype, content ) {
+        console.log( content );
+        var e = Web3UI.Utils.el( id );
+        e.download = fn;
+        e.href = Web3UI.Utils.todataurl( mimetype, content );
+        e.click();
+      },
+
+      savetextfile: function( id, fn, content ) {
+        Web3UI.Utils.savedataurl( id, fn, 'text/plain', content );
+      },
+
+      savejsonfile: function( id, fn, contents ) {
+        Web3UI.Utils.savetextfile( id, fn, JSON.stringify(contents) );
+      },
+
+      // activate <input type='file'> for user to select file(s)
+      selfile: function( idinp ) {
+        var e = Web3UI.Utils.gete( idinp );
+        e.value = "";
+        e.click();
+      },
+
       // open text file
       opentextfile: function( id, file, callback, onerror, rejectjson, muststartwith ) {
         if (!file)
@@ -2300,7 +2547,6 @@ var Web3UI = {
       }
 
   }
-
 }
 
 Web3UI.Utils.class = { 
@@ -2326,5 +2572,26 @@ Web3UI.Utils.class = {
       Web3UI.Utils.class.rem( e, cls1 );
       Web3UI.Utils.class.add( e, cls2 );
     }
+  }
+}
+
+Web3UI.Utils.Qr = {
+  gen: function( id ) {
+    if (!(typeof QRIO === 'undefined')) {
+      Web3UI.Utils.Qr.__qrg = Web3UI.Utils.Qr.__qrg ? Web3UI.Utils.Qr.__qrg : new QRIO.Generator();
+      Web3UI.Utils.Qr.__qrg.open( Web3UI.Utils.el(id) );
+    }
+  },
+  scan: function( id ) {
+    if (!(typeof QRIO === 'undefined')) {
+      Web3UI.Utils.Qr.__qrr = Web3UI.Utils.Qr.__qrr ? Web3UI.Utils.Qr.__qrr : new QRIO.Reader();
+//Web3UI.Utils.Qr.__qrr._settestpolyfill();
+      Web3UI.Utils.Qr.__qrr.open( Web3UI.Utils.el(id) );
+      Web3UI.Utils.firemouseev( id, 'input' );
+    }
+  },
+  select: function( e ) {
+    Web3UI.Utils.select( e );
+    Web3UI.Utils.Qr.gen( e );
   }
 }

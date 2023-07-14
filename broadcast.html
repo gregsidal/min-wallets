@@ -11,6 +11,11 @@
     <script src="lib/web3/js/web3.min.js" ></script>
     <script src="w3ui.js"                 ></script>
     <script src="meu.js"                  ></script>
+
+    <link  href="lib/qr/qrio.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/qr/qrcode.js"></script>
+    <script type="text/javascript" src="lib/qr/qrio.js"></script>
+
     <script>
       Web3UI.Basic = {};
 
@@ -22,7 +27,7 @@
         var rawtx = document.getElementById( idraw ).value;
         if (!rawtx) {
           Web3UI.Basic.rawTxChange();
-          return Web3UI.Utils.showmsg( id, "Transaction bytecode required" );
+          return Web3UI.Utils.showerr( id, "Transaction bytecode required" );
         }
         function showmsg( msg, en ) {
           var currawtx = document.getElementById( idraw ).value;
@@ -43,12 +48,17 @@
         function oncompletion( resmsg, receipt ) {
           showmsg( resmsg, false );
         }
+        var jtx = Web3UI.Utils.getmsg( 'Web3UI_00rawtxjson', "{}" );
+        jtx = JSON.parse( jtx );
+        jtx = jtx.Transaction ? jtx.Transaction : {};
         Web3UI.Network.broadcastTx( rawtx, 
-          { 'gasprice':"", 
-            'value':"0.0", 
-            'name':"Raw Transaction", 
-            'hash':"", 
-            'idmsg':'Web3UI_0broadcastconsole' },
+          { 'gasprice':  jtx["Gas price"] ? jtx["Gas price"] : "", 
+            'gas': jtx["Gas"] ? jtx["Gas"] : "",
+            'gaslimit': jtx.gas ? jtx.gas : "",
+            'value': jtx["Ether to send"] ? jtx["Ether to send"] : "0.0", 
+            'name': "Raw Transaction", 
+            'hash': "", 
+            'idmsg': 'Web3UI_0broadcastconsole' },
           { 'oncompletion':oncompletion, 'onwait':onwait, 'onerror':onerror } );
       },
 
@@ -107,21 +117,32 @@
 
     <div id="Web3UI_0NETWORK"></div>
 
-    <h1 class="topbargap">Minimal Ethereum Utilities <div class="mbr">Broadcast Transaction</div></h1>
+    <h1 class="topbargap">Minimal Ethereum Utilities 
+      <div class="mbr"><span class="icon broadcast"></span>Broadcast Transaction</div>
+    </h1>
 
     <p class="descr"></p>
 
     <p id="broadcast">
-      <span class='control'>
-        <button class='open' onclick="Web3UI.Utils.gete('Web3UI_0file').click()">Open from File</button>
-        <input type="file" class="dispnone" accept="text/*" id="Web3UI_0file" 
-                   onchange="Web3UI.Basic.openFromFile(this.files[0]);"/>
-        <i id='Web3UI_00rawtxjson' class='pre'></i>
+      <span class='control min'>
       </span>
-      <span class='subsec'>
+      <span class='control min'>
         <span class='control'>
-          <span class='tag'>Signed raw transaction bytecode:</span>
+          <span class='tag sameline'>Signed raw transaction bytecode:</span> 
+          <span class='subbtn attn' onclick="Web3UI.Utils.selfile('Web3UI_0file')">Open from file</span>
+          <span class="subbtn bug qr" onClick="Web3UI.Utils.Qr.scan('Web3UI_00rawtx');"></span>
+          <input type="file" class="dispnone" accept="text/*" id="Web3UI_0file" 
+                 onchange="Web3UI.Basic.openFromFile(this.files[0]);"/>
+        </span>
+        <span class='control'>
           <textarea id="Web3UI_00rawtx" value="" size="30" oninput="Web3UI.Basic.rawTxChange();"></textarea>
+        </span>
+      </span>
+      <span class='subsec min'>
+        <span class='toggle long closed' id='Web3UI_00rawtxjson_foldpane'>
+          <span class='subsec statusinfo'>
+            <i id='Web3UI_00rawtxjson' class='pre'></i>
+          </span>
         </span>
       </span>
       <span class='subsec'>
@@ -132,11 +153,11 @@
           </span>
         </span>
       </span>
-      <span class='control min'>
-      </span>
     </p>
 
     <div id="Web3UI_0FOOT"></div>
+
+    <div id="qrio-reader-html"></div>
 
   </body>
 

@@ -12,26 +12,39 @@
     <script src="lib/web3/js/web3.min.js" ></script>
     <script src="w3ui.js"                 ></script>
     <script src="meu.js"                  ></script>
+
+    <link  href="lib/qr/qrio.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/qr/qrcode.js"></script>
+    <script type="text/javascript" src="lib/qr/qrio.js"></script>
+
     <script>
       Web3UI.Basic = {};
       Web3UI.Basic.update = function( action ) {
         Web3UI.Network.getAddressInfo( 'Web3UI_0account', action );
       }
+      function onpageload() {
+        MEU.onload( 'nosign' );
+      }
     </script>
   </head>
 
-  <body onload="MEU.onload('nosign');">
+  <body onload="onpageload()">
 
     <div id="Web3UI_0NETWORK"></div>
 
-    <h1 class="topbargap">Minimal Ethereum Utilities <div class="mbr">Address Information</div></h1>
+    <h1 class="topbargap">Minimal Ethereum Utilities 
+      <div class="mbr"><span class="icon addressinfo"></span>Address Information</div>
+    </h1>
 
     <p class="descr"></p>
 
     <p class='wallet'>
       <span class='control'>
         <span class="control">
-          <span class='tag'>Address:</span>
+          <span class="control">
+            <span class='tag sameline'>Address:</span>
+            <span class='subbtn bug qr' onClick="Web3UI.Utils.Qr.scan('Web3UI_0account_address');"></span>
+          </span>
           <input type='text' id='Web3UI_0account_address' value='' size='10' oninput="Web3UI.Wallet.clrwmsg()"/>
           <button class='inline' onClick='Web3UI.Basic.update();'>Update</button>
         </span>
@@ -61,6 +74,8 @@
     </p>
 
     <div id="Web3UI_0FOOT"></div>
+
+    <div id="qrio-reader-html"></div>
 
   </body>
 

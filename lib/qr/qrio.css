@@ -1,0 +1,98 @@
+/* some default css for QrioJS @ githib/gregsidal */
+
+/* widget framing */
+.qrio-widget {
+  position: fixed; left: 0em; top: 0em; right: 0em; bottom: 0em;
+  background-color: rgba(255,255,255,1.0); padding: 0.5em;
+  visibility: visible; opacity: 1.0; transition: opacity 0.8s ease-in;
+}
+.qrio-widget.qrio-closed {visibility: hidden; opacity: 0.0;}
+.qrio-widget > .qrio-widget {position: absolute;}
+.qrio-controls {position: absolute; top: 0.5em; left: 0.5em; right: 0.5em;}
+.qrio-exitbtn {position: absolute; top: 0; right: 0;}
+
+/* status and message displays */
+.qrio-status {
+  max-width: 100%; max-height: 50%; overflow: auto;
+  padding: 0.6em 0.7em; padding-bottom: 1.1em;
+  background-color: rgba(235,235,235,0.8);
+  font-family: monospace; font-size: 95%;
+}
+.qrio-status:empty {display: none;}
+.qrio-status > div > .qrio-extracted {display: block; margin-top: 0.5em; white-space: nowrap;}
+.qrio-extracted > .qrio-check        {cursor: pointer; margin-right: 0.3em; width: auto; border: 0;}
+
+.qrio-extracted > .qrio-msg          {padding: 0.15em 0.1em; cursor: pointer;}
+.qrio-extracted > .qrio-msg.qrio-c0  {background-color: rgba(85,240,40,0.15);}
+.qrio-extracted > .qrio-msg.qrio-c1  {background-color: rgba(240,140,20,0.15);}
+.qrio-extracted > .qrio-msg.qrio-c2  {background-color: rgba(240,240,40,0.2);}
+.qrio-extracted > .qrio-msg.qrio-c3  {background-color: rgba(40,40,240,0.1);}
+.qrio-extracted > .qrio-msg.qrio-c4  {background-color: rgba(220,40,240,0.1);}
+
+.qrio-target {color: #34c; text-decoration: none; cursor: pointer;}
+.qrio-target::after {content: '\29c9'; font-size:125%; padding:0 0.5em; position: relative; top: 0.2em;}
+
+/* viewers */
+.qrio-imgwrap {
+  position: absolute;
+  left: 0.5em; top: 2.5em; right: 0.5em; bottom: 2.5em; margin: auto auto;
+}
+@media all and (orientation:landscape) {
+  .qrio-imgwrap {top: 4.5em;}
+}
+.qrio-imgwrap.qrio-scroll {
+  overflow-y: auto; top: 8em; bottom: 2.2em;
+}
+@media all and (max-width:540px) {
+  .qrio-imgwrap.qrio-scroll {top: 6.5em;}
+}
+@media all and (orientation:landscape) {
+  .qrio-imgwrap.qrio-scroll {top: 6.3em;}
+}
+@media all and (min-width:520px) {
+  .qrio-imgwrap {left: 60px; right: 60px;}
+}
+@media all and (min-width:720px) {
+  .qrio-imgwrap {left: 120px; right: 120px;}
+  .qrio-imgwrap.scroll {max-width: 500px;}
+}
+.qrio-img {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0; width: 100%;
+}
+.qrio-img.qrio-closed {display: none;}
+.qrio-img.qrio-fitted {
+  width: auto; max-width: 100%; max-height: 100%; margin: auto auto;
+}
+
+/* svg overlay */
+.qrio-overlay > .qrio-extracted {stroke: red; stroke-width: 1;}
+@media all and (max-width:700px) {
+  .qrio-overlay > .qrio-extracted {stroke-width: 1;}
+}
+.qrio-overlay > .qrio-extracted         {fill: rgba(75,240,40,0.2);}
+.qrio-overlay > .qrio-extracted.qrio-c1 {fill: rgba(240,140,20,0.2);}
+.qrio-overlay > .qrio-extracted.qrio-c2 {fill: rgba(240,240,40,0.25);}
+.qrio-overlay > .qrio-extracted.qrio-c3 {fill: rgba(40,40,240,0.133);}
+.qrio-overlay > .qrio-extracted.qrio-c4 {fill: rgba(240,40,240,0.133);}
+
+/* specific styles */
+#qrio-generator-status {display: inline-block; max-width: 75%; white-space: nowrap; padding: 0.3em 0.4em;}
+#qrio-reader-status {margin-top: 3em;}
+
+#qrio-reader-camerainput {display: none;}
+#qrio-reader-camerainputlabel {
+  position: absolute; top: 0; left: 0;  
+  font-size: 95%; font-family: sans-serif; cursor: pointer;
+  padding: 3px 6px; border: 1px solid green; border-radius: 0.2em; margin-right: 0.3em;
+}
+#qrio-reader-camerainputlabel:active, #qrio-reader-camerainputlabel:hover {
+  background-color: #ded;
+}
+#qrio-reader-fileinput {
+  position: absolute; bottom: 0.5em; left: 0.5em; max-width: 95%; border: 0; 
+  font-size: 85%; font-family: sans-serif; background-color: rgba(235,235,235,0.8);
+}
+#qrio-reader-fileinput::file-selector-button {
+}
+

@@ -12,31 +12,26 @@
     <script src="../lib/web3/js/web3.min.js" ></script>
     <script src="../w3ui.js"                 ></script>
     <script src="../meu.js"                  ></script>
+
+    <link  href="../lib/qr/qrio.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../lib/qr/qrcode.js"></script>
+    <script type="text/javascript" src="../lib/qr/qrio.js"></script>
   </head>
 
-  <body onload="MEU.onload('offline',['params','broad','deploy']);MEU.insertabisec(true,true);">
+  <body onload="MEU.onload2('deploy','Contract Deployment','offline',['params','broad','deploy']);MEU.insertabisec(true,true);">
 
     <div id="Web3UI_0NETWORK"></div>
 
-    <h1 class="topbargap">Offline Minimal Ethereum Utilities <div class="mbr">Contract Deployment</div></h1>
-
-    <p class="descr">
-      <label for='Web3UI_0LINKS_infotoggle' class='toggler menu'>Sign and save deploy transaction to be sent to the network.</label>
-      <input type='checkbox' id='Web3UI_0LINKS_infotoggle' class='toggler'></input>
-      <span class='toggle long closed'>
-        <span class='subsec'>
-      <span id="Web3UI_0VERSION"></span>
-      Contract's ABI is used to generate deployment user interface.
-      <span id="Web3UI_0LINKS"></span>
-        </span>
-      </span>
-    </p>
+    <div id="Web3UI_0HD"></div>
 
     <span id="Web3UI_0ABISECTION"></span>
 
     <div id="Web3UI_0UIGEN"></div>
 
     <div id="Web3UI_0FOOT"></div>
+
+    <div id="qrio-generator-html"></div>
+    <div id="qrio-reader-html"></div>
 
   </body>
 

@@ -12,10 +12,17 @@
     <script src="../lib/web3/js/web3.min.js" ></script>
     <script src="../w3ui.js"                 ></script>
     <script src="../meu.js"                  ></script>
+
+    <link  href="../lib/qr/qrio.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../lib/qr/qrcode.js"></script>
+    <script type="text/javascript" src="../lib/qr/qrio.js"></script>
   </head>
 
   <body onload="MEU.onplainload('offline',true);">
-    <h1>Offline Minimal Ethereum Utilities <div class="mbr">Wallet Manager</div></h1>
+
+    <h1>Offline Minimal Ethereum Utilities 
+      <div class="mbr"><span class="icon walletmgr"></span>Wallet Manager</div>
+    </h1>
 
     <p class="descr">
       <span id="Web3UI_0VERSION"></span>
@@ -26,6 +33,8 @@
     <span id="Web3UI_0GENWALLETCREATE"></span>
 
     <div id="Web3UI_0FOOT"></div>
+
+    <div id="qrio-generator-html"></div>
 
   </body>
 

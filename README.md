@@ -1,6 +1,8 @@
 ## Minimal Ethereum Utilities v0.70 (July 2023)
 Some small simple self-custodial Ethereum wallet and transaction tools that run locally in browser without the need for browser plugins or other installs.
 
+*** Note this project is no longer being updated and is archived ***
+
 The offline versions of the utilities can be used to manage wallets and sign transactions on an air-gapped device.
 
 New to v0.70: Using the offline tools, signed transactions can be displayed as QR codes. The QR codes can be quickly scanned and broadcast to the network using the camera on a mobile device.
@@ -22,6 +24,3 @@ Utilities summary:
     Broadcast Signed Raw Transaction
 
 Web3.js, from Ethereum foundation, is used to create key-pairs and sign transactions (no RYO crypto primitives used).
-
-Old version 0.50 is here: https://gregsidal.github.io/min-wallets/v050/index.html
-
